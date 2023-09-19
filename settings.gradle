@@ -1,0 +1,8 @@
+rootProject.name = 'iriseye'
+include(':iriseye-common')
+include(':iriseye-logging')
+include(':iriseye-system')
+include(':iriseye-tools')
+include(':iriseye-generator')
+include(':iriseye-message')
+include(':iriseye-watcher')
