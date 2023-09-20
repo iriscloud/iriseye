@@ -19,14 +19,14 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTask;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTaskLog;
-import me.zhengjie.service.watcher.modules.source.repository.QuartzTaskLogRepository;
-import me.zhengjie.service.watcher.modules.source.repository.QuartzTaskRepository;
-import me.zhengjie.service.watcher.modules.source.service.QuartzTaskService;
-import me.zhengjie.service.watcher.modules.source.service.dto.QuartzTaskQueryCriteria;
-import me.zhengjie.service.watcher.modules.source.service.dto.RTaskDto;
-import me.zhengjie.service.watcher.modules.source.util.task.QuartzTaskManage;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTaskLog;
+import me.zhengjie.service.watcher.modules.source.repository.RuleTaskLogRepository;
+import me.zhengjie.service.watcher.modules.source.repository.RuleTaskRepository;
+import me.zhengjie.service.watcher.modules.source.service.RuleTaskService;
+import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskQueryCriteria;
+import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskDto;
+import me.zhengjie.service.watcher.modules.source.util.task.RuleTaskManage;
 import me.zhengjie.utils.*;
 import org.quartz.CronExpression;
 import org.springframework.data.domain.Pageable;
@@ -44,43 +44,43 @@ import java.util.*;
  */
 @RequiredArgsConstructor
 @Service(value = "quartzTaskService")
-public class QuartzTaskServiceImpl implements QuartzTaskService {
+public class RuleTaskServiceImpl implements RuleTaskService {
 
-    private final QuartzTaskRepository quartzJobRepository;
-    private final QuartzTaskLogRepository quartzLogRepository;
-    private final QuartzTaskManage quartzTaskManage;
+    private final RuleTaskRepository quartzJobRepository;
+    private final RuleTaskLogRepository quartzLogRepository;
+    private final RuleTaskManage quartzTaskManage;
     private final RedisUtils redisUtils;
 
     @Override
-    public PageResult<QuartzTask> queryAll(QuartzTaskQueryCriteria criteria, Pageable pageable){
+    public PageResult<RuleTask> queryAll(RuleTaskQueryCriteria criteria, Pageable pageable){
         return PageUtil.toPage(quartzJobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable));
     }
 
     @Override
-    public PageResult<QuartzTaskLog> queryAllLog(QuartzTaskQueryCriteria criteria, Pageable pageable){
+    public PageResult<RuleTaskLog> queryAllLog(RuleTaskQueryCriteria criteria, Pageable pageable){
         return PageUtil.toPage(quartzLogRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable));
     }
 
     @Override
-    public List<QuartzTask> queryAll(QuartzTaskQueryCriteria criteria) {
+    public List<RuleTask> queryAll(RuleTaskQueryCriteria criteria) {
         return quartzJobRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
     }
 
     @Override
-    public List<QuartzTaskLog> queryAllLog(QuartzTaskQueryCriteria criteria) {
+    public List<RuleTaskLog> queryAllLog(RuleTaskQueryCriteria criteria) {
         return quartzLogRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
     }
 
     @Override
-    public QuartzTask findById(Long id) {
-        QuartzTask quartzJob = quartzJobRepository.findById(id).orElseGet(QuartzTask::new);
+    public RuleTask findById(Long id) {
+        RuleTask quartzJob = quartzJobRepository.findById(id).orElseGet(RuleTask::new);
         ValidationUtil.isNull(quartzJob.getId(),"QuartzJob","id",id);
         return quartzJob;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void create(QuartzTask resources) {
+    public void create(RuleTask resources) {
         if (!CronExpression.isValidExpression(resources.getCronExpression())){
             throw new BadRequestException("cron表达式格式错误");
         }
@@ -90,7 +90,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(QuartzTask resources) {
+    public void update(RuleTask resources) {
         if (!CronExpression.isValidExpression(resources.getCronExpression())){
             throw new BadRequestException("cron表达式格式错误");
         }
@@ -99,7 +99,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     }
 
     @Override
-    public void updateIsPause(QuartzTask quartzJob) {
+    public void updateIsPause(RuleTask quartzJob) {
         if (quartzJob.getIsPause()) {
             quartzTaskManage.resumeJob(quartzJob);
             quartzJob.setIsPause(false);
@@ -111,7 +111,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     }
 
     @Override
-    public void execution(QuartzTask quartzJob) {
+    public void execution(RuleTask quartzJob) {
         quartzTaskManage.runJobNow(quartzJob);
     }
 
@@ -119,7 +119,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     @Transactional(rollbackFor = Exception.class)
     public void delete(Set<Long> ids) {
         for (Long id : ids) {
-            QuartzTask quartzJob = findById(id);
+            RuleTask quartzJob = findById(id);
             quartzTaskManage.deleteJob(quartzJob);
             quartzJobRepository.delete(quartzJob);
         }
@@ -134,7 +134,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
                 // 如果是手动清除子任务id，会出现id为空字符串的问题
                 continue;
             }
-            QuartzTask quartzJob = findById(Long.parseLong(id));
+            RuleTask quartzJob = findById(Long.parseLong(id));
             // 执行任务
             String uuid = IdUtil.simpleUUID();
             quartzJob.setUuid(uuid);
@@ -155,20 +155,20 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     }
 
     @Override
-    public PageResult<RTaskDto> getAllRTasks(){
-        List<RTaskDto> taskDtos = new ArrayList<>();
+    public PageResult<RuleTaskDto> getAllRTasks(){
+        List<RuleTaskDto> taskDtos = new ArrayList<>();
         List<String> strings = SpringContextHolder.getAllRTask();
         for (String item: strings){
-            taskDtos.add(new RTaskDto(item, true));
+            taskDtos.add(new RuleTaskDto(item, true));
         }
-        PageResult<RTaskDto> pageResult = PageUtil.toPage(taskDtos, taskDtos.size());
+        PageResult<RuleTaskDto> pageResult = PageUtil.toPage(taskDtos, taskDtos.size());
         return pageResult;
     }
 
     @Override
-    public void download(List<QuartzTask> quartzJobs, HttpServletResponse response) throws IOException {
+    public void download(List<RuleTask> quartzJobs, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (QuartzTask quartzJob : quartzJobs) {
+        for (RuleTask quartzJob : quartzJobs) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("任务名称", quartzJob.getTaskName());
             map.put("Bean名称", quartzJob.getBeanName());
@@ -184,9 +184,9 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     }
 
     @Override
-    public void downloadLog(List<QuartzTaskLog> queryAllLog, HttpServletResponse response) throws IOException {
+    public void downloadLog(List<RuleTaskLog> queryAllLog, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (QuartzTaskLog quartzLog : queryAllLog) {
+        for (RuleTaskLog quartzLog : queryAllLog) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("任务名称", quartzLog.getTaskName());
             map.put("Bean名称", quartzLog.getBeanName());

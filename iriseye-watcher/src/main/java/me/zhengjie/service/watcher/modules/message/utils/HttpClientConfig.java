@@ -1,4 +1,4 @@
-package me.zhengjie.utils.http;
+package me.zhengjie.service.watcher.modules.message.utils;
 
 /**
  * @author lihongbo

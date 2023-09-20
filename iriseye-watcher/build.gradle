@@ -4,6 +4,10 @@
 
 dependencies {
     compile project(':iriseye-logging')
-    implementation group: 'ru.yandex.clickhouse', name: 'clickhouse-jdbc', version: '0.3.2'
     compile "org.quartz-scheduler:quartz:${quartz_version}"
+    compile (group: 'org.asynchttpclient', name: 'async-http-client', version: '2.12.1' )
+    compile group: 'io.netty', name: 'netty-all', version: '4.1.75.Final'
+
+    implementation group: 'ru.yandex.clickhouse', name: 'clickhouse-jdbc', version: '0.3.2'
+
 }

@@ -15,10 +15,10 @@
  */
 package me.zhengjie.service.watcher.modules.source.service;
 
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTask;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTaskLog;
-import me.zhengjie.service.watcher.modules.source.service.dto.QuartzTaskQueryCriteria;
-import me.zhengjie.service.watcher.modules.source.service.dto.RTaskDto;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTaskLog;
+import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskQueryCriteria;
+import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskDto;
 import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 
@@ -31,7 +31,7 @@ import java.util.Set;
  * @author Zheng Jie
  * @date 2019-01-07
  */
-public interface QuartzTaskService {
+public interface RuleTaskService {
 
     /**
      * 分页查询
@@ -39,14 +39,14 @@ public interface QuartzTaskService {
      * @param pageable 分页参数
      * @return /
      */
-    PageResult<QuartzTask> queryAll(QuartzTaskQueryCriteria criteria, Pageable pageable);
+    PageResult<RuleTask> queryAll(RuleTaskQueryCriteria criteria, Pageable pageable);
 
     /**
      * 查询全部
      * @param criteria 条件
      * @return /
      */
-    List<QuartzTask> queryAll(QuartzTaskQueryCriteria criteria);
+    List<RuleTask> queryAll(RuleTaskQueryCriteria criteria);
 
     /**
      * 分页查询日志
@@ -54,26 +54,26 @@ public interface QuartzTaskService {
      * @param pageable 分页参数
      * @return /
      */
-    PageResult<QuartzTaskLog> queryAllLog(QuartzTaskQueryCriteria criteria, Pageable pageable);
+    PageResult<RuleTaskLog> queryAllLog(RuleTaskQueryCriteria criteria, Pageable pageable);
 
     /**
      * 查询全部
      * @param criteria 条件
      * @return /
      */
-    List<QuartzTaskLog> queryAllLog(QuartzTaskQueryCriteria criteria);
+    List<RuleTaskLog> queryAllLog(RuleTaskQueryCriteria criteria);
 
     /**
      * 创建
      * @param resources /
      */
-    void create(QuartzTask resources);
+    void create(RuleTask resources);
 
     /**
      * 编辑
      * @param resources /
      */
-    void update(QuartzTask resources);
+    void update(RuleTask resources);
 
     /**
      * 删除任务
@@ -86,19 +86,19 @@ public interface QuartzTaskService {
      * @param id ID
      * @return /
      */
-    QuartzTask findById(Long id);
+    RuleTask findById(Long id);
 
     /**
      * 更改定时任务状态
      * @param quartzJob /
      */
-    void updateIsPause(QuartzTask quartzJob);
+    void updateIsPause(RuleTask quartzJob);
 
     /**
      * 立即执行定时任务
      * @param quartzJob /
      */
-    void execution(QuartzTask quartzJob);
+    void execution(RuleTask quartzJob);
 
     /**
      * 导出定时任务
@@ -106,7 +106,7 @@ public interface QuartzTaskService {
      * @param response /
      * @throws IOException /
      */
-    void download(List<QuartzTask> queryAll, HttpServletResponse response) throws IOException;
+    void download(List<RuleTask> queryAll, HttpServletResponse response) throws IOException;
 
     /**
      * 导出定时任务日志
@@ -114,7 +114,7 @@ public interface QuartzTaskService {
      * @param response /
      * @throws IOException /
      */
-    void downloadLog(List<QuartzTaskLog> queryAllLog, HttpServletResponse response) throws IOException;
+    void downloadLog(List<RuleTaskLog> queryAllLog, HttpServletResponse response) throws IOException;
 
     /**
      * 执行子任务
@@ -129,5 +129,5 @@ public interface QuartzTaskService {
      * @return
      * @throws InterruptedException
      */
-    PageResult<RTaskDto> getAllRTasks();
+    PageResult<RuleTaskDto> getAllRTasks();
 }

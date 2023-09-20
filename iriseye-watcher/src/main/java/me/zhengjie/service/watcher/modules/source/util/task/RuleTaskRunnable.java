@@ -17,7 +17,7 @@ package me.zhengjie.service.watcher.modules.source.util.task;
 
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.service.watcher.modules.source.domain.DataSource;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTask;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
 import me.zhengjie.utils.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ReflectionUtils;
@@ -30,15 +30,15 @@ import java.util.concurrent.Callable;
  * @author /
  */
 @Slf4j
-public class QuartzTaskRunnable implements Callable<Object> {
+public class RuleTaskRunnable implements Callable<Object> {
 
-	private final QuartzTask quartzTask;
+	private final RuleTask quartzTask;
 	private final DataSource dataSource;
 	private final Object target;
 	private final Method method;
 	private final String params;
 
-	QuartzTaskRunnable(QuartzTask quartzTask, DataSource dataSource)
+	RuleTaskRunnable(RuleTask quartzTask, DataSource dataSource)
 			throws NoSuchMethodException, SecurityException {
 		this.quartzTask = quartzTask;
 		this.dataSource =dataSource;

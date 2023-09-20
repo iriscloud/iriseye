@@ -1,9 +1,8 @@
 package me.zhengjie.service.watcher.modules.source.task.detectors.domain;
 
 
-import me.zhengjie.service.watcher.modules.manager.service.dto.AlarmRuleDto;
 import me.zhengjie.service.watcher.modules.source.domain.DataSource;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTask;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
 
 /**
  * @author wuhao
@@ -18,7 +17,7 @@ public class DetectorRequest {
 
     private DataSource dataSource;
     
-    private QuartzTask quartzTask;
+    private RuleTask quartzTask;
 
     public String getId() {
         return id;
@@ -36,11 +35,11 @@ public class DetectorRequest {
         this.dataSource = dataSource;
     }
 
-    public QuartzTask getQuartzTask() {
+    public RuleTask getQuartzTask() {
         return quartzTask;
     }
 
-    public void setQuartzTask(QuartzTask quartzTask) {
+    public void setQuartzTask(RuleTask quartzTask) {
         this.quartzTask = quartzTask;
     }
 }

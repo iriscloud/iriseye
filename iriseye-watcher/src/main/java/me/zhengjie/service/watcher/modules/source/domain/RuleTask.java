@@ -32,8 +32,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-@Table(name = "watcher_quartz_task")
-public class QuartzTask extends BaseEntity implements Serializable {
+@Table(name = "watcher_rule_task")
+public class RuleTask extends BaseEntity implements Serializable {
 
     public static final String TASK_KEY = "TASK_KEY";
 

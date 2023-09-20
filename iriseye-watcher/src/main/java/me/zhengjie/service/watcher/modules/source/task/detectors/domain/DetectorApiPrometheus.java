@@ -3,7 +3,6 @@ package me.zhengjie.service.watcher.modules.source.task.detectors.domain;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import me.zhengjie.service.watcher.modules.source.task.detectors.utils.HttpClientUtil;
 import org.apache.http.HttpResponse;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +39,10 @@ public class DetectorApiPrometheus implements DetectorApi {
         StringBuilder sb = new StringBuilder();
         sb.append("query=").append(request.getQuartzTask().getParams()).append("&");
         sb.append("time=").append(System.currentTimeMillis());
-        HttpResponse response = HttpClientUtil.httpPost(url, headers, sb.toString());
-        String content = HttpClientUtil.getContent(response);
-        return content;
+//        HttpResponse response = HttpClientUtil.httpPost(url, headers, sb.toString());
+//        String content = HttpClientUtil.getContent(response);
+//        return content;
+        return null;
     }
 
     /**

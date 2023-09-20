@@ -13,23 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package me.zhengjie.service.watcher.modules.source.repository;
+package me.zhengjie.service.watcher.modules.source.service.dto;
 
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTask;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import lombok.Data;
+import me.zhengjie.annotation.Query;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
  * @author Zheng Jie
- * @date 2019-01-07
+ * @date 2019-6-4 10:33:02
  */
-public interface QuartzTaskRepository extends JpaRepository<QuartzTask,Long>, JpaSpecificationExecutor<QuartzTask> {
+@Data
+public class RuleTaskQueryCriteria {
 
-    /**
-     * 查询启用的任务
-     * @return List
-     */
-    List<QuartzTask> findByIsPauseIsFalse();
+    @Query(type = Query.Type.INNER_LIKE)
+    private String jobName;
+
+    @Query
+    private Boolean isSuccess;
+
+    @Query(type = Query.Type.BETWEEN)
+    private List<Timestamp> createTime;
 }

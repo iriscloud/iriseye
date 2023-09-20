@@ -15,7 +15,7 @@
  */
 package me.zhengjie.service.watcher.modules.source.repository;
 
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTaskLog;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTaskLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -23,6 +23,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @author Zheng Jie
  * @date 2019-01-07
  */
-public interface QuartzTaskLogRepository extends JpaRepository<QuartzTaskLog,Long>, JpaSpecificationExecutor<QuartzTaskLog> {
+public interface RuleTaskLogRepository extends JpaRepository<RuleTaskLog,Long>, JpaSpecificationExecutor<RuleTaskLog> {
 
 }

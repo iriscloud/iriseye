@@ -1,4 +1,4 @@
-package me.zhengjie.utils.http;
+package me.zhengjie.service.watcher.modules.message.utils;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -18,9 +18,10 @@ import java.util.concurrent.TimeUnit;
 import static org.asynchttpclient.Dsl.asyncHttpClient;
 
 /**
- * @author lihongbo
- * @create 2020-04-27 5:25 下午
- **/
+ * HttpClientManager
+ *
+ * @author wuhao
+ */
 public class HttpClientManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientManager.class);
@@ -31,12 +32,11 @@ public class HttpClientManager {
     private static final Cache<String, AsyncHttpClient> CLIENT_MAP = Caffeine.newBuilder().expireAfterAccess(15,
             TimeUnit.MINUTES).removalListener((RemovalListener<String, AsyncHttpClient>) (key, value, cause) -> {
         try {
-            LOGGER.debug("{} remove AsyncHttpClient cause:{}", key, cause.name());
             if (value != null) {
                 value.close();
             }
         } catch (Exception e) {
-            LOGGER.warn("AsyncHttpClient {} removed ,close error", key, e);
+            LOGGER.warn("HttpClientManager removed {}  ,close error", key, e);
         }
     }).build();
 
@@ -50,14 +50,10 @@ public class HttpClientManager {
 
     private void initConfig() {
         asyncHttpClientConf = new DefaultAsyncHttpClientConfig.Builder().setCompressionEnforced(true)
-                /** 变更原因: 实际上我们一个池对众多的 http 地址, 每个都启用 keepalive 并没啥意义. 复用不上.
-                 keepalived
-                 */
                 .setKeepAlive(true)
                 .setRequestTimeout(5000)
                 .setConnectTimeout(5000)
                 .setReadTimeout(5000)
-                // 空闲连接超时时间
                 .setPooledConnectionIdleTimeout(20000)
                 .setIoThreadsCount(4)
                 .setMaxRequestRetry(3).setSslContext(sslCtx).build();

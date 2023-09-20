@@ -30,7 +30,7 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @Table(name = "watcher_quartz_task_log")
-public class QuartzTaskLog implements Serializable {
+public class RuleTaskLog implements Serializable {
 
     @Id
     @Column(name = "log_id")

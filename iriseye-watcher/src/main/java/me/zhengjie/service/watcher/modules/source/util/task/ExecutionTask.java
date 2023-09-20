@@ -16,10 +16,10 @@
 package me.zhengjie.service.watcher.modules.source.util.task;
 
 import me.zhengjie.service.watcher.modules.source.domain.DataSource;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTask;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTaskLog;
-import me.zhengjie.service.watcher.modules.source.repository.QuartzTaskLogRepository;
-import me.zhengjie.service.watcher.modules.source.service.QuartzTaskService;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTaskLog;
+import me.zhengjie.service.watcher.modules.source.repository.RuleTaskLogRepository;
+import me.zhengjie.service.watcher.modules.source.service.RuleTaskService;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.SpringContextHolder;
 import me.zhengjie.utils.StringUtils;
@@ -49,15 +49,15 @@ public class ExecutionTask extends QuartzJobBean {
     @Override
     public void executeInternal(JobExecutionContext context) {
         // 获取任务
-        QuartzTask quartzJob = (QuartzTask) context.getMergedJobDataMap().get(QuartzTask.TASK_KEY);
+        RuleTask quartzJob = (RuleTask) context.getMergedJobDataMap().get(RuleTask.TASK_KEY);
         // 获取spring bean
-        QuartzTaskLogRepository quartzLogRepository = SpringContextHolder.getBean(QuartzTaskLogRepository.class);
-        QuartzTaskService quartzJobService = SpringContextHolder.getBean(QuartzTaskService.class);
+        RuleTaskLogRepository quartzLogRepository = SpringContextHolder.getBean(RuleTaskLogRepository.class);
+        RuleTaskService quartzJobService = SpringContextHolder.getBean(RuleTaskService.class);
         RedisUtils redisUtils = SpringContextHolder.getBean(RedisUtils.class);
 
         String uuid = quartzJob.getUuid();
 
-        QuartzTaskLog log = new QuartzTaskLog();
+        RuleTaskLog log = new RuleTaskLog();
         log.setTaskName(quartzJob.getTaskName());
         log.setBeanName(quartzJob.getBeanName());
         log.setMethodName(quartzJob.getMethodName());
@@ -66,7 +66,7 @@ public class ExecutionTask extends QuartzJobBean {
         log.setCronExpression(quartzJob.getCronExpression());
         try {
             // 执行任务
-            QuartzTaskRunnable task = new QuartzTaskRunnable(quartzJob, new DataSource());
+            RuleTaskRunnable task = new RuleTaskRunnable(quartzJob, new DataSource());
             Future<?> future = executor.submit(task);
             future.get();
             long times = System.currentTimeMillis() - startTime;

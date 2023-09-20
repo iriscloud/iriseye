@@ -21,11 +21,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.exception.BadRequestException;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTask;
-import me.zhengjie.service.watcher.modules.source.domain.QuartzTaskLog;
-import me.zhengjie.service.watcher.modules.source.service.QuartzTaskService;
-import me.zhengjie.service.watcher.modules.source.service.dto.QuartzTaskQueryCriteria;
-import me.zhengjie.service.watcher.modules.source.service.dto.RTaskDto;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTaskLog;
+import me.zhengjie.service.watcher.modules.source.service.RuleTaskService;
+import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskQueryCriteria;
+import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskDto;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.SpringContextHolder;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -49,43 +48,43 @@ import java.util.Set;
 @RequiredArgsConstructor
 @RequestMapping("/api/tasks")
 @Api(tags = "告警:告警管理")
-public class QuartzTaskController {
+public class RuleTaskController {
 
     private static final String ENTITY_NAME = "quartzTask";
-    private final QuartzTaskService quartzTaskService;
+    private final RuleTaskService quartzTaskService;
 
     @ApiOperation("查询定时任务")
     @GetMapping
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<QuartzTask>> queryQuartzJob(QuartzTaskQueryCriteria criteria, Pageable pageable){
+    public ResponseEntity<PageResult<RuleTask>> queryQuartzJob(RuleTaskQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(quartzTaskService.queryAll(criteria,pageable), HttpStatus.OK);
     }
 
     @ApiOperation("查询任务类型")
     @GetMapping(value = "/names")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<RTaskDto>> queryQuartzRTask(QuartzTaskQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<PageResult<RTaskDto>>(quartzTaskService.getAllRTasks(), HttpStatus.OK);
+    public ResponseEntity<PageResult<RuleTaskDto>> queryQuartzRTask(RuleTaskQueryCriteria criteria, Pageable pageable){
+        return new ResponseEntity<PageResult<RuleTaskDto>>(quartzTaskService.getAllRTasks(), HttpStatus.OK);
     }
 
     @ApiOperation("导出任务数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('tasks:list')")
-    public void exportQuartzJob(HttpServletResponse response, QuartzTaskQueryCriteria criteria) throws IOException {
+    public void exportQuartzJob(HttpServletResponse response, RuleTaskQueryCriteria criteria) throws IOException {
         quartzTaskService.download(quartzTaskService.queryAll(criteria), response);
     }
 
     @ApiOperation("导出日志数据")
     @GetMapping(value = "/logs/download")
     @PreAuthorize("@el.check('tasks:list')")
-    public void exportQuartzJobLog(HttpServletResponse response, QuartzTaskQueryCriteria criteria) throws IOException {
+    public void exportQuartzJobLog(HttpServletResponse response, RuleTaskQueryCriteria criteria) throws IOException {
         quartzTaskService.downloadLog(quartzTaskService.queryAllLog(criteria), response);
     }
 
     @ApiOperation("查询任务执行日志")
     @GetMapping(value = "/logs")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<QuartzTaskLog>> queryQuartzJobLog(QuartzTaskQueryCriteria criteria, Pageable pageable){
+    public ResponseEntity<PageResult<RuleTaskLog>> queryQuartzJobLog(RuleTaskQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(quartzTaskService.queryAllLog(criteria,pageable), HttpStatus.OK);
     }
 
@@ -93,7 +92,7 @@ public class QuartzTaskController {
     @ApiOperation("新增定时任务")
     @PostMapping
     @PreAuthorize("@el.check('tasks:add')")
-    public ResponseEntity<Object> createQuartzJob(@Validated @RequestBody QuartzTask resources){
+    public ResponseEntity<Object> createQuartzJob(@Validated @RequestBody RuleTask resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
@@ -107,7 +106,7 @@ public class QuartzTaskController {
     @ApiOperation("修改定时任务")
     @PutMapping
     @PreAuthorize("@el.check('tasks:edit')")
-    public ResponseEntity<Object> updateQuartzJob(@Validated(QuartzTask.Update.class) @RequestBody QuartzTask resources){
+    public ResponseEntity<Object> updateQuartzJob(@Validated(RuleTask.Update.class) @RequestBody RuleTask resources){
         // 验证Bean是不是合法的，合法的定时任务 Bean 需要用 @Service 定义
         checkBean(resources.getBeanName());
         quartzTaskService.update(resources);

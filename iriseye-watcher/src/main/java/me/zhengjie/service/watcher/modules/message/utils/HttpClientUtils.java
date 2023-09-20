@@ -1,4 +1,4 @@
-package me.zhengjie.utils.http;
+package me.zhengjie.service.watcher.modules.message.utils;
 
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * HttpClientUtils
  * @author wuhao
- * @createTime 2022-03-14 16:37:00
  */
 public class HttpClientUtils {
     public static final String DEFAULT_POOL_NAME = "Alarm_Proxy";
@@ -46,7 +46,6 @@ public class HttpClientUtils {
 
         } catch (Exception e) {
             LOGGER.error("send error, url:{} body:{} ", url, body);
-
         }
     }
 }

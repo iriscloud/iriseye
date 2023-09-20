@@ -29,13 +29,13 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RTaskDto extends BaseDTO implements Serializable {
+public class RuleTaskDto extends BaseDTO implements Serializable {
 
     private String name;
 
     private Boolean enabled;
 
-    public RTaskDto(String name, Boolean enabled) {
+    public RuleTaskDto(String name, Boolean enabled) {
         this.name = name;
         this.enabled = enabled;
     }
