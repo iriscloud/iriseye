@@ -15,10 +15,10 @@
  */
 package me.zhengjie.service.watcher.modules.source.util.task;
 
-import me.zhengjie.service.watcher.modules.source.domain.DataSource;
 import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
 import me.zhengjie.service.watcher.modules.source.domain.RuleTaskLog;
 import me.zhengjie.service.watcher.modules.source.repository.RuleTaskLogRepository;
+import me.zhengjie.service.watcher.modules.source.service.WatcherSourceService;
 import me.zhengjie.service.watcher.modules.source.service.RuleTaskService;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.SpringContextHolder;
@@ -45,6 +45,7 @@ public class ExecutionTask extends QuartzJobBean {
 
     // 此处仅供参考，可根据任务执行情况自定义线程池参数
     private final ThreadPoolTaskExecutor executor = SpringContextHolder.getBean("elAsync");
+    
 
     @Override
     public void executeInternal(JobExecutionContext context) {
@@ -52,7 +53,8 @@ public class ExecutionTask extends QuartzJobBean {
         RuleTask quartzJob = (RuleTask) context.getMergedJobDataMap().get(RuleTask.TASK_KEY);
         // 获取spring bean
         RuleTaskLogRepository quartzLogRepository = SpringContextHolder.getBean(RuleTaskLogRepository.class);
-        RuleTaskService quartzJobService = SpringContextHolder.getBean(RuleTaskService.class);
+        RuleTaskService taskService = SpringContextHolder.getBean(RuleTaskService.class);
+        WatcherSourceService sourceService = SpringContextHolder.getBean(WatcherSourceService.class);
         RedisUtils redisUtils = SpringContextHolder.getBean(RedisUtils.class);
 
         String uuid = quartzJob.getUuid();
@@ -66,7 +68,7 @@ public class ExecutionTask extends QuartzJobBean {
         log.setCronExpression(quartzJob.getCronExpression());
         try {
             // 执行任务
-            RuleTaskRunnable task = new RuleTaskRunnable(quartzJob, new DataSource());
+            RuleTaskRunnable task = new RuleTaskRunnable(quartzJob, sourceService.findByName(quartzJob.getSourceName()));
             Future<?> future = executor.submit(task);
             future.get();
             long times = System.currentTimeMillis() - startTime;
@@ -91,7 +93,7 @@ public class ExecutionTask extends QuartzJobBean {
             if(quartzJob.getPauseAfterFailure() != null && quartzJob.getPauseAfterFailure()){
                 quartzJob.setIsPause(false);
                 //更新状态
-                quartzJobService.updateIsPause(quartzJob);
+                taskService.updateIsPause(quartzJob);
             }
         } finally {
             quartzLogRepository.save(log);

@@ -25,7 +25,7 @@
     <el-dialog :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" append-to-body width="730px">
       <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="100px">
         <el-form-item label="名称" prop="taskName">
-          <el-input v-model="form.taskName" style="width: 220px;" />
+          <el-input v-model="form.taskName" style="width: 500px;" />
         </el-form-item>
 
         <el-form-item label="数据源" prop="sourceName">
@@ -57,33 +57,44 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="执行方法" prop="methodName">
-          <el-input v-model="form.methodName" style="width: 220px;" />
+        <el-form-item label="执行频率(秒)" prop="checkTime">
+          <el-input v-model="form.checkTime" style="width: 200px;" />
         </el-form-item>
-        <el-form-item label="执行规则" prop="cronExpression">
-          <el-input v-model="form.cronExpression" style="width: 220px;" />
+
+        <el-form-item label="持续时长(秒)" prop="durationTime">
+          <el-input v-model="form.durationTime" style="width: 200px;" />
         </el-form-item>
-        <el-form-item label="任务负责人" prop="personInCharge">
-          <el-input v-model="form.personInCharge" style="width: 220px;" />
+
+        <el-form-item label="corn(可选)" prop="cronExpression">
+          <el-input v-model="form.cronExpression" style="width: 500px;" />
+        </el-form-item>
+        <el-form-item label="执行内容" prop="params">
+          <el-input v-model="form.params" style="width: 500px;" rows="3" type="textarea" />
+        </el-form-item>
+
+        <el-form-item label="描述" prop="description">
+          <el-input v-model="form.description" style="width: 500px;" rows="2" type="textarea" />
+        </el-form-item>
+
+        <el-form-item label="飞书回调" prop="feiShu">
+          <el-input v-model="form.feiShu" style="width: 300px;" />
+        </el-form-item>
+        <el-form-item label="回调地址" prop="callBack">
+          <el-input v-model="form.callBack" style="width: 300px;" />
         </el-form-item>
         <el-form-item label="失败后暂停">
-          <el-radio-group v-model="form.pauseAfterFailure" style="width: 220px">
-            <el-radio :label="true">是</el-radio>
+          <el-radio-group v-model="form.pauseAfterFailure" style="width: 200px">
             <el-radio :label="false">否</el-radio>
+            <el-radio :label="true">是</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="任务状态">
-          <el-radio-group v-model="form.isPause" style="width: 220px">
+          <el-radio-group v-model="form.isPause" style="width: 200px">
             <el-radio :label="false">启用</el-radio>
             <el-radio :label="true">暂停</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="参数内容">
-          <el-input v-model="form.params" style="width: 556px;" rows="4" type="textarea" />
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" style="width: 220px;" />
-        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -92,21 +103,18 @@
     </el-dialog>
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-      <el-table-column :selectable="checkboxT" type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" />
+      <el-table-column :selectable="checkboxT" type="selection"  />
+      <el-table-column :show-overflow-tooltip="true" prop="id" label="编号"  />
       <el-table-column :show-overflow-tooltip="true" prop="taskName" label="名称" />
       <el-table-column :show-overflow-tooltip="true" prop="beanName" label="执行器" />
-      <el-table-column :show-overflow-tooltip="true" prop="methodName" label="执行方法" />
-      <el-table-column :show-overflow-tooltip="true" prop="params" label="参数" />
-      <el-table-column :show-overflow-tooltip="true" prop="cronExpression" label="cron表达式" />
-      <el-table-column :show-overflow-tooltip="true" prop="isPause" width="90px" label="状态">
+      <el-table-column :show-overflow-tooltip="true" prop="params" label="执行语句" />
+      <el-table-column :show-overflow-tooltip="true" prop="isPause" width="100px" label="状态">
         <template slot-scope="scope">
           <el-tag :type="scope.row.isPause ? 'warning' : 'success'">{{ scope.row.isPause ? '已暂停' : '运行中' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="description" width="150px" label="描述" />
-      <el-table-column :show-overflow-tooltip="true" prop="createTime" width="136px" label="创建日期" />
-      <el-table-column v-if="checkPer(['admin','timing:edit','timing:del'])" label="操作" width="170px" align="center" fixed="right">
+      <el-table-column :show-overflow-tooltip="true" prop="createTime" width="150px" label="创建日期" />
+      <el-table-column v-if="checkPer(['admin','timing:edit','timing:del'])" label="操作" width="300px" align="center" fixed="right">
         <template slot-scope="scope">
           <el-button v-permission="['admin','task:edit']" size="mini" style="margin-right: 3px;" type="text" @click="crud.toEdit(scope.row)">编辑</el-button>
           <el-button v-permission="['admin','task:edit']" size="mini" style="margin-right: 3px;" type="text" @click="crud.toEdit(scope.row)">克隆</el-button>
@@ -146,7 +154,7 @@ import crudOperation from '@crud/CRUD.operation'
 import pagination from '@crud/Pagination'
 import DateRangePicker from '@/components/DateRangePicker'
 
-const defaultForm = { id: null, taskName: null, sourceName: null, beanName: null, methodName: null, params: null, cronExpression: null, pauseAfterFailure: true, isPause: false, callBack: null, description: null }
+const defaultForm = { id: null, taskName: null, sourceName: null, beanName: null, methodName: null, params: null, checkTime: 0, durationTime: 0, startTime: 0, endTime: 0, level: null, feiShu: null, cronExpression: null, pauseAfterFailure: false, isPause: false, callBack: null, description: null }
 export default {
   name: 'Tasks',
   components: { Log, pagination, crudOperation, rrOperation, DateRangePicker },
@@ -169,18 +177,6 @@ export default {
         ],
         sourceName: [
           { required: true, message: '请输入数据源名称', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: '请输入任务描述', trigger: 'blur' }
-        ],
-        beanName: [
-          { required: true, message: '请输入Bean名称', trigger: 'blur' }
-        ],
-        methodName: [
-          { required: true, message: '请输入方法名称', trigger: 'blur' }
-        ],
-        cronExpression: [
-          { required: true, message: '请输入Cron表达式', trigger: 'blur' }
         ]
       }
     }

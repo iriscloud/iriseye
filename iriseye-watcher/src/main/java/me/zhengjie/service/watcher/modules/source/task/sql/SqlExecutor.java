@@ -13,12 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package me.zhengjie.service.watcher.modules.source.util;
+package me.zhengjie.service.watcher.modules.source.task.sql;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.StringUtils;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.source.util.WatcherSourceEnum;
 import me.zhengjie.utils.CloseUtil;
 
 import javax.sql.DataSource;
@@ -27,18 +31,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author /
  */
 @Slf4j
-public class SqlUtils {
-
+public class SqlExecutor {
+	
+	private static Cache<String, DataSource> SOURCE = Caffeine.newBuilder().maximumSize(1000)
+			.expireAfterWrite(5, TimeUnit.MINUTES).
+			removalListener((key, value, cause) -> {
+                log.info("expire for source:{}", key);
+            }).build();
 	/**
 	 * 获取数据源
 	 *
@@ -47,7 +54,28 @@ public class SqlUtils {
 	 * @param password /
 	 * @return DataSource
 	 */
-	private static DataSource getDataSource(String sourceUrl, String userName, String password) {
+	public static DataSource getDataSource(String sourceUrl, String userName, String password){
+		return SOURCE.get(sourceUrl, s -> createDataSource(sourceUrl, userName, password));
+	}
+	
+	public static ResultSet executeSql(WatcherSource source, String sql){
+		Connection connection = null;
+		Statement st = null;
+		ResultSet resultSet = null;
+		try {
+			connection = getConnection(source.getUrl(), source.getUserName(), source.getPwd());
+			st = connection.createStatement();
+			 resultSet = st.executeQuery(sql);
+		} catch (Exception e){
+			log.error("executeSql fail:{}", sql, e);
+		} finally {
+			releaseConnection(connection);
+			CloseUtil.close(st);
+		}
+		return resultSet;
+	}
+
+	public static DataSource createDataSource(String sourceUrl, String userName, String password) {
 		DruidDataSource druidDataSource = new DruidDataSource();
 		String className;
 		try {
@@ -56,7 +84,7 @@ public class SqlUtils {
 			throw new RuntimeException("Get class name error: =" + sourceUrl);
 		}
 		if (StringUtils.isEmpty(className)) {
-			DataSourceEnum dataTypeEnum = DataSourceEnum.urlOf(sourceUrl);
+			WatcherSourceEnum dataTypeEnum = WatcherSourceEnum.urlOf(sourceUrl);
 			if (null == dataTypeEnum) {
 				throw new RuntimeException("Not supported data type: sourceUrl=" + sourceUrl);
 			}
@@ -88,7 +116,7 @@ public class SqlUtils {
 		return druidDataSource;
 	}
 
-	private static Connection getConnection(String sourceUrl, String userName, String password) {
+	public static Connection getConnection(String sourceUrl, String userName, String password) {
 		DataSource dataSource = getDataSource(sourceUrl, userName, password);
 		Connection connection = null;
 		try {
@@ -103,9 +131,7 @@ public class SqlUtils {
 		} catch (Exception e) {
 			log.error("create connection error, sourceUrl: {}", sourceUrl);
 			throw new RuntimeException("create connection error, sourceUrl: " + sourceUrl);
-		} finally {
-			CloseUtil.close(connection);
-		}
+		} 
 		return connection;
 	}
 
@@ -135,18 +161,6 @@ public class SqlUtils {
 		return false;
 	}
 
-	public static String executeFile(String sourceUrl, String userName, String password, File sqlFile) {
-		Connection connection = getConnection(sourceUrl, userName, password);
-		try {
-			batchExecute(connection, readSqlList(sqlFile));
-		} catch (Exception e) {
-			log.error("sql脚本执行发生异常:{}",e.getMessage());
-			return e.getMessage();
-		}finally {
-			releaseConnection(connection);
-		}
-		return "success";
-	}
 
 
 	/**
@@ -171,35 +185,5 @@ public class SqlUtils {
 			CloseUtil.close(st);
 		}
 	}
-
-	/**
-	 * 将文件中的sql语句以；为单位读取到列表中
-	 * @param sqlFile /
-	 * @return /
-	 * @throws Exception e
-	 */
-	private static List<String> readSqlList(File sqlFile) throws Exception {
-		List<String> sqlList = Lists.newArrayList();
-		StringBuilder sb = new StringBuilder();
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new FileInputStream(sqlFile), StandardCharsets.UTF_8))) {
-			String tmp;
-			while ((tmp = reader.readLine()) != null) {
-				log.info("line:{}", tmp);
-				if (tmp.endsWith(";")) {
-					sb.append(tmp);
-					sqlList.add(sb.toString());
-					sb.delete(0, sb.length());
-				} else {
-					sb.append(tmp);
-				}
-			}
-			if (!"".endsWith(sb.toString().trim())) {
-				sqlList.add(sb.toString());
-			}
-		}
-
-		return sqlList;
-	}
-
+	
 }

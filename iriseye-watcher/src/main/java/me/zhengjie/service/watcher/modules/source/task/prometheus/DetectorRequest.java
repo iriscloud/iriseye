@@ -1,7 +1,7 @@
-package me.zhengjie.service.watcher.modules.source.task.detectors.domain;
+package me.zhengjie.service.watcher.modules.source.task.prometheus;
 
 
-import me.zhengjie.service.watcher.modules.source.domain.DataSource;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
 import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
 
 /**
@@ -15,7 +15,7 @@ public class DetectorRequest {
     
     private String id;
 
-    private DataSource dataSource;
+    private WatcherSource dataSource;
     
     private RuleTask quartzTask;
 
@@ -27,11 +27,11 @@ public class DetectorRequest {
         this.id = id;
     }
 
-    public DataSource getDataSource() {
+    public WatcherSource getDataSource() {
         return dataSource;
     }
 
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource(WatcherSource dataSource) {
         this.dataSource = dataSource;
     }
 

@@ -1,9 +1,8 @@
-package me.zhengjie.service.watcher.modules.source.task.detectors.domain;
+package me.zhengjie.service.watcher.modules.source.task.prometheus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.http.HttpResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

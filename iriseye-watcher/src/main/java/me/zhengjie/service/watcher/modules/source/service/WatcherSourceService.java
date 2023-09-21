@@ -15,9 +15,9 @@
  */
 package me.zhengjie.service.watcher.modules.source.service;
 
-import me.zhengjie.service.watcher.modules.source.domain.DataSource;
-import me.zhengjie.service.watcher.modules.source.service.dto.DataSourceDto;
-import me.zhengjie.service.watcher.modules.source.service.dto.DataSourceQueryCriteria;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.source.service.dto.WatcherSourceDto;
+import me.zhengjie.service.watcher.modules.source.service.dto.WatcherSourceQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 
@@ -30,7 +30,7 @@ import java.util.Set;
  * @author ZhangHouYing
  * @date 2019-08-24
  */
-public interface DataSourceService {
+public interface WatcherSourceService {
 
     /**
      * 分页查询
@@ -38,40 +38,48 @@ public interface DataSourceService {
      * @param pageable 分页参数
      * @return /
      */
-    PageResult<DataSourceDto> queryAll(DataSourceQueryCriteria criteria, Pageable pageable);
+    PageResult<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria, Pageable pageable);
 
     /**
      * 查询全部
      * @param criteria 条件
      * @return /
      */
-    List<DataSourceDto> queryAll(DataSourceQueryCriteria criteria);
+    List<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria);
 
     /**
      * 查询全部数据源名称
      * @param criteria 条件
      * @return /
      */
-    PageResult<DataSourceDto> queryAllNames(DataSourceQueryCriteria criteria);
+    PageResult<WatcherSourceDto> queryAllNames(WatcherSourceQueryCriteria criteria);
 
     /**
      * 根据ID查询
      * @param id /
      * @return /
      */
-    DataSourceDto findById(String id);
+    WatcherSourceDto findById(String id);
+
+    /**
+     * findByName
+     * 
+     * @param name
+     * @return
+     */
+    WatcherSource findByName(String name);
 
     /**
      * 创建
      * @param resources /
      */
-    void create(DataSource resources);
+    void create(WatcherSource resources);
 
     /**
      * 编辑
      * @param resources /
      */
-    void update(DataSource resources);
+    void update(WatcherSource resources);
 
     /**
      * 删除
@@ -84,7 +92,7 @@ public interface DataSourceService {
 	 * @param resources /
 	 * @return /
 	 */
-	boolean testConnection(DataSource resources);
+	boolean testConnection(WatcherSource resources);
 
     /**
      * 导出数据
@@ -92,6 +100,6 @@ public interface DataSourceService {
      * @param response /
      * @throws IOException e
      */
-    void download(List<DataSourceDto> queryAll, HttpServletResponse response) throws IOException;
+    void download(List<WatcherSourceDto> queryAll, HttpServletResponse response) throws IOException;
     
 }

@@ -1,8 +1,5 @@
-package me.zhengjie.service.watcher.modules.source.task.detectors.domain;
+package me.zhengjie.service.watcher.modules.source.task.prometheus;
 
-
-import me.zhengjie.service.watcher.modules.source.task.detectors.domain.DetectorRequest;
-import me.zhengjie.service.watcher.modules.source.task.detectors.domain.DetectorResponse;
 
 /**
  * 用与探测

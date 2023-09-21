@@ -1,4 +1,4 @@
-package me.zhengjie.service.watcher.modules.source.task.detectors.domain;
+package me.zhengjie.service.watcher.modules.source.task.prometheus;
 
 /**
  * @author wuhao

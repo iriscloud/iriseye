@@ -26,7 +26,7 @@ import me.zhengjie.service.watcher.modules.source.repository.RuleTaskRepository;
 import me.zhengjie.service.watcher.modules.source.service.RuleTaskService;
 import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskQueryCriteria;
 import me.zhengjie.service.watcher.modules.source.service.dto.RuleTaskDto;
-import me.zhengjie.service.watcher.modules.source.util.task.RuleTaskManage;
+import me.zhengjie.service.watcher.modules.source.util.task.RuleTaskManager;
 import me.zhengjie.utils.*;
 import org.quartz.CronExpression;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +48,7 @@ public class RuleTaskServiceImpl implements RuleTaskService {
 
     private final RuleTaskRepository quartzJobRepository;
     private final RuleTaskLogRepository quartzLogRepository;
-    private final RuleTaskManage quartzTaskManage;
+    private final RuleTaskManager quartzTaskManage;
     private final RedisUtils redisUtils;
 
     @Override
@@ -91,9 +91,9 @@ public class RuleTaskServiceImpl implements RuleTaskService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(RuleTask resources) {
-        if (!CronExpression.isValidExpression(resources.getCronExpression())){
-            throw new BadRequestException("cron表达式格式错误");
-        }
+//        if (!CronExpression.isValidExpression(resources.getCronExpression())){
+//            throw new BadRequestException("cron表达式格式错误");
+//        }
         resources = quartzJobRepository.save(resources);
         quartzTaskManage.updateJobCron(resources);
     }

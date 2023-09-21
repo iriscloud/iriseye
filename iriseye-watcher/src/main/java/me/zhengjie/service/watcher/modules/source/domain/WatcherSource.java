@@ -21,7 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Table(name="watcher_datasource")
-public class DataSource extends BaseEntity implements Serializable {
+public class WatcherSource extends BaseEntity implements Serializable {
 
     @Id
     @Column(name = "wd_id", length = 64)
@@ -49,7 +49,7 @@ public class DataSource extends BaseEntity implements Serializable {
     private String pwd;
 
 
-    public void copy(DataSource source){
+    public void copy(WatcherSource source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

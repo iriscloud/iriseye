@@ -16,15 +16,17 @@
 package me.zhengjie.service.watcher.modules.source.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.service.watcher.modules.source.domain.DataSource;
-import me.zhengjie.service.watcher.modules.source.repository.DataSourceRepository;
-import me.zhengjie.service.watcher.modules.source.service.DataSourceService;
-import me.zhengjie.service.watcher.modules.source.service.dto.DataSourceDto;
-import me.zhengjie.service.watcher.modules.source.service.dto.DataSourceQueryCriteria;
-import me.zhengjie.service.watcher.modules.source.service.mapstruct.DataSourceMapper;
-import me.zhengjie.service.watcher.modules.source.util.SqlUtils;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.source.repository.WatcherSourceRepository;
+import me.zhengjie.service.watcher.modules.source.service.WatcherSourceService;
+import me.zhengjie.service.watcher.modules.source.service.dto.WatcherSourceDto;
+import me.zhengjie.service.watcher.modules.source.service.dto.WatcherSourceQueryCriteria;
+import me.zhengjie.service.watcher.modules.source.service.mapstruct.WatcherSourceMapper;
+import me.zhengjie.service.watcher.modules.source.task.sql.SqlExecutor;
 import me.zhengjie.utils.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author zhanghouying
@@ -42,53 +45,69 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DataSourceServiceImpl implements DataSourceService {
+public class WatcherSourceServiceImpl implements WatcherSourceService {
 
-    private final DataSourceRepository dataSourceRepository;
-    private final DataSourceMapper dataSourceMapper;
+    private final WatcherSourceRepository dataSourceRepository;
+    private final WatcherSourceMapper dataSourceMapper;
+    
+    private static Cache<String, WatcherSource> CACHE = Caffeine.newBuilder().maximumSize(1000)
+            .expireAfterWrite(2, TimeUnit.MINUTES).build();
 
     @Override
-    public PageResult<DataSourceDto> queryAll(DataSourceQueryCriteria criteria, Pageable pageable){
-        Page<DataSource> page = dataSourceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+    public PageResult<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria, Pageable pageable){
+        Page<WatcherSource> page = dataSourceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
         return PageUtil.toPage(page.map(dataSourceMapper::toDto));
     }
 
     @Override
-    public List<DataSourceDto> queryAll(DataSourceQueryCriteria criteria){
+    public List<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria){
         return dataSourceMapper.toDto(dataSourceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
     }
 
     @Override
-    public PageResult<DataSourceDto> queryAllNames(DataSourceQueryCriteria criteria) {
-        List<DataSourceDto> taskDtos = queryAll(criteria);
-        DataSourceDto dataSourceDto = new DataSourceDto();
+    public PageResult<WatcherSourceDto> queryAllNames(WatcherSourceQueryCriteria criteria) {
+        List<WatcherSourceDto> taskDtos = queryAll(criteria);
+        WatcherSourceDto dataSourceDto = new WatcherSourceDto();
         dataSourceDto.setName("none");
         dataSourceDto.setId("");
         taskDtos.add(dataSourceDto);
-        PageResult<DataSourceDto> pageResult = PageUtil.toPage(taskDtos, taskDtos.size());
+        PageResult<WatcherSourceDto> pageResult = PageUtil.toPage(taskDtos, taskDtos.size());
         return pageResult;
     }
 
     @Override
-    public DataSourceDto findById(String id) {
-        DataSource database = dataSourceRepository.findById(id).orElseGet(DataSource::new);
+    public WatcherSourceDto findById(String id) {
+        WatcherSource database = dataSourceRepository.findById(id).orElseGet(WatcherSource::new);
         ValidationUtil.isNull(database.getId(),"Database","id",id);
         return dataSourceMapper.toDto(database);
     }
 
     @Override
+    public WatcherSource findByName(String name) {
+       return CACHE.get(name, s -> {
+           WatcherSource database = dataSourceRepository.findByName(name);
+           if (database == null) {
+               database = new WatcherSource();
+           }
+           return database;
+       });
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void create(DataSource resources) {
+    public void create(WatcherSource resources) {
         resources.setId(IdUtil.simpleUUID());
+        CACHE.put(resources.getName(), resources);
         dataSourceRepository.save(resources);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(DataSource resources) {
-        DataSource database = dataSourceRepository.findById(resources.getId()).orElseGet(DataSource::new);
+    public void update(WatcherSource resources) {
+        WatcherSource database = dataSourceRepository.findById(resources.getId()).orElseGet(WatcherSource::new);
         ValidationUtil.isNull(database.getId(),"Database","id",resources.getId());
         database.copy(resources);
+        CACHE.put(resources.getName(),resources);
         dataSourceRepository.save(database);
     }
 
@@ -101,9 +120,9 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
 	@Override
-	public boolean testConnection(DataSource resources) {
+	public boolean testConnection(WatcherSource resources) {
 		try {
-			return SqlUtils.testConnection(resources.getUrl(), resources.getUserName(), resources.getPwd());
+			return SqlExecutor.testConnection(resources.getUrl(), resources.getUserName(), resources.getPwd());
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return false;
@@ -111,9 +130,9 @@ public class DataSourceServiceImpl implements DataSourceService {
 	}
 
     @Override
-    public void download(List<DataSourceDto> queryAll, HttpServletResponse response) throws IOException {
+    public void download(List<WatcherSourceDto> queryAll, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (DataSourceDto databaseDto : queryAll) {
+        for (WatcherSourceDto databaseDto : queryAll) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("数据库名称", databaseDto.getName());
             map.put("数据库连接地址", databaseDto.getUrl());

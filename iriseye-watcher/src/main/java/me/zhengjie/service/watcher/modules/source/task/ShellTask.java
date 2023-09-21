@@ -17,6 +17,8 @@ package me.zhengjie.service.watcher.modules.source.task;
 
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.RTask;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,14 +31,11 @@ import org.springframework.stereotype.Service;
 @RTask
 @Service("ShellTask")
 public class ShellTask implements WatcherTask{
+    
 
     @Override
-    public void run() {
-        log.info("run 执行成功");
+    public void run(RuleTask ruleTask, WatcherSource dataSource) {
+        
     }
-
-    @Override
-    public void run(String args) {
-        log.info("run 执行成功. {}", args);
-    }
+    
 }

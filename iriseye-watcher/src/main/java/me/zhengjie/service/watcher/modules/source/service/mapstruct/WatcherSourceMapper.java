@@ -16,8 +16,8 @@
 package me.zhengjie.service.watcher.modules.source.service.mapstruct;
 
 import me.zhengjie.base.BaseMapper;
-import me.zhengjie.service.watcher.modules.source.domain.DataSource;
-import me.zhengjie.service.watcher.modules.source.service.dto.DataSourceDto;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.source.service.dto.WatcherSourceDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -26,6 +26,6 @@ import org.mapstruct.ReportingPolicy;
 * @date 2019-08-24
 */
 @Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface DataSourceMapper extends BaseMapper<DataSourceDto, DataSource> {
+public interface WatcherSourceMapper extends BaseMapper<WatcherSourceDto, WatcherSource> {
 
 }

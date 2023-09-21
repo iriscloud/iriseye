@@ -16,10 +16,10 @@
 package me.zhengjie.service.watcher.modules.source.util.task;
 
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.service.watcher.modules.source.domain.DataSource;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
 import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
 import me.zhengjie.utils.SpringContextHolder;
-import org.apache.commons.lang3.StringUtils;
+import me.zhengjie.utils.StringUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -27,39 +27,31 @@ import java.util.concurrent.Callable;
 
 /**
  * 执行定时任务
+ *
  * @author /
  */
 @Slf4j
 public class RuleTaskRunnable implements Callable<Object> {
+    private static final String DEFAULT_METHOD = "run";
+    private final RuleTask ruleTask;
+    private final WatcherSource dataSource;
+    private final Object target;
+    private final Method method;
 
-	private final RuleTask quartzTask;
-	private final DataSource dataSource;
-	private final Object target;
-	private final Method method;
-	private final String params;
+    RuleTaskRunnable(RuleTask ruleTask, WatcherSource dataSource)
+            throws NoSuchMethodException, SecurityException {
+        this.ruleTask = ruleTask;
+        this.dataSource = dataSource;
+        this.target = SpringContextHolder.getBean(ruleTask.getBeanName());
+        String methodStr = StringUtils.isNoneBlank(ruleTask.getMethodName())? ruleTask.getMethodName() : DEFAULT_METHOD;
+        this.method = target.getClass().getDeclaredMethod(methodStr, RuleTask.class, WatcherSource.class);
+    }
 
-	RuleTaskRunnable(RuleTask quartzTask, DataSource dataSource)
-			throws NoSuchMethodException, SecurityException {
-		this.quartzTask = quartzTask;
-		this.dataSource =dataSource;
-		this.target = SpringContextHolder.getBean(quartzTask.getBeanName());
-		this.params = quartzTask.getParams();
-		if (StringUtils.isNotBlank(params)) {
-			this.method = target.getClass().getDeclaredMethod(quartzTask.getMethodName(), String.class);
-		} else {
-			this.method = target.getClass().getDeclaredMethod(quartzTask.getMethodName());
-		}
-	}
-
-	@Override
-	@SuppressWarnings("all")
-	public Object call() throws Exception {
-		ReflectionUtils.makeAccessible(method);
-		if (StringUtils.isNotBlank(params)) {
-			method.invoke(target, params);
-		} else {
-			method.invoke(target);
-		}
-		return null;
-	}
+    @Override
+    @SuppressWarnings("all")
+    public Object call() throws Exception {
+        ReflectionUtils.makeAccessible(method);
+        method.invoke(target, ruleTask, dataSource);
+        return null;
+    }
 }

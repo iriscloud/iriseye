@@ -19,10 +19,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.service.watcher.modules.source.domain.DataSource;
-import me.zhengjie.service.watcher.modules.source.service.DataSourceService;
-import me.zhengjie.service.watcher.modules.source.service.dto.DataSourceDto;
-import me.zhengjie.service.watcher.modules.source.service.dto.DataSourceQueryCriteria;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.source.service.WatcherSourceService;
+import me.zhengjie.service.watcher.modules.source.service.dto.WatcherSourceDto;
+import me.zhengjie.service.watcher.modules.source.service.dto.WatcherSourceQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -43,28 +43,28 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/datasource")
-public class DataSourceController {
+public class WatcherSourceController {
 	
-    private final DataSourceService dataSourceService;
+    private final WatcherSourceService dataSourceService;
 
 	@ApiOperation("导出数据库数据")
 	@GetMapping(value = "/download")
 	@PreAuthorize("@el.check('datasource:list')")
-	public void exportDatabase(HttpServletResponse response, DataSourceQueryCriteria criteria) throws IOException {
+	public void exportDatabase(HttpServletResponse response, WatcherSourceQueryCriteria criteria) throws IOException {
 		dataSourceService.download(dataSourceService.queryAll(criteria), response);
 	}
 
     @ApiOperation(value = "查询数据库")
     @GetMapping
 	@PreAuthorize("@el.check('datasource:list')")
-    public ResponseEntity<PageResult<DataSourceDto>> queryDatabase(DataSourceQueryCriteria criteria, Pageable pageable){
+    public ResponseEntity<PageResult<WatcherSourceDto>> queryDatabase(WatcherSourceQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(dataSourceService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
     @ApiOperation("查询数据源名称")
     @GetMapping(value = "/names")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<DataSourceDto>> queryQuartzRTask(DataSourceQueryCriteria criteria){
+    public ResponseEntity<PageResult<WatcherSourceDto>> queryQuartzRTask(WatcherSourceQueryCriteria criteria){
         return new ResponseEntity<>(dataSourceService.queryAllNames(criteria), HttpStatus.OK);
     }
 
@@ -73,7 +73,7 @@ public class DataSourceController {
     @ApiOperation(value = "新增数据库")
     @PostMapping
 	@PreAuthorize("@el.check('datasource:add')")
-    public ResponseEntity<Object> createDatabase(@Validated @RequestBody DataSource resources){
+    public ResponseEntity<Object> createDatabase(@Validated @RequestBody WatcherSource resources){
 		dataSourceService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -82,7 +82,7 @@ public class DataSourceController {
     @ApiOperation(value = "修改数据库")
     @PutMapping
 	@PreAuthorize("@el.check('datasource:edit')")
-    public ResponseEntity<Object> updateDatabase(@Validated @RequestBody DataSource resources){
+    public ResponseEntity<Object> updateDatabase(@Validated @RequestBody WatcherSource resources){
         dataSourceService.update(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -100,7 +100,7 @@ public class DataSourceController {
 	@ApiOperation(value = "测试数据库链接")
 	@PostMapping("/testConnect")
 	@PreAuthorize("@el.check('datasource:testConnect')")
-	public ResponseEntity<Object> testConnect(@Validated @RequestBody DataSource resources){
+	public ResponseEntity<Object> testConnect(@Validated @RequestBody WatcherSource resources){
 		return new ResponseEntity<>(dataSourceService.testConnection(resources),HttpStatus.CREATED);
 	}
 

@@ -17,11 +17,16 @@ package me.zhengjie.service.watcher.modules.source.task;
 
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.RTask;
+import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
+import me.zhengjie.service.watcher.modules.source.task.sql.SqlExecutor;
+import me.zhengjie.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.sql.ResultSet;
+
 /**
- * 测试用
- * me.zhengjie.service.watcher.modules.source.task.SimpleTask
+ * Sql Task
  * @author Zheng Jie
  * @date 2019-01-08
  */
@@ -31,13 +36,11 @@ import org.springframework.stereotype.Service;
 public class SqlTask implements WatcherTask{
 
     @Override
-    public void run() {
-        
+    public void run(RuleTask ruleTask, WatcherSource dataSource) {
+        if (dataSource == null || StringUtils.isBlank(dataSource.getUrl())){
+            return;
+        }
+        ResultSet resultSet = SqlExecutor.executeSql(dataSource, ruleTask.getParams());
+        //resultSet.getA 
     }
-
-    @Override
-    public void run(String args) {
-        
-    }
-
 }

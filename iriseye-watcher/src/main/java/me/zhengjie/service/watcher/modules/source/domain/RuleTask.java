@@ -50,34 +50,55 @@ public class RuleTask extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "定时器名称")
     private String taskName;
 
-    @ApiModelProperty(value = "分组名称")
-    private String groupName;
-
     @NotBlank
     @ApiModelProperty(value = "数据源名称")
     private String sourceName;
 
+    @ApiModelProperty(value = "分组名称")
+    private String groupName;
+
     @NotBlank
     @ApiModelProperty(value = "Bean名称")
     private String beanName;
-
-    @NotBlank
-    @ApiModelProperty(value = "方法名称")
-    private String methodName;
     
-
-    @ApiModelProperty(value = "参数")
+    @ApiModelProperty(value = "方法名称")
+    private String methodName = "run";
+    
+    @ApiModelProperty(value = "运行参数")
     private String params;
-
-    @NotBlank
+    
     @ApiModelProperty(value = "cron表达式")
     private String cronExpression;
+    
+    @ApiModelProperty(value = "持续时间")
+    private  long checkTime;
+    
+    @ApiModelProperty(value = "持续时间")
+    private  long durationTime;
+    
+    @ApiModelProperty(value = "开始时间")
+    private long startTime;
+    
+    @ApiModelProperty(value = "结束时间")
+    private long endTime;
+
+    @ApiModelProperty(value = "任务级别")
+    private long level;
 
     @ApiModelProperty(value = "状态，暂时或启动")
     private Boolean isPause = false;
 
     @ApiModelProperty(value = "回调地址")
+    private String tag;
+
+    @ApiModelProperty(value = "回调地址")
     private String callBack;
+
+    @ApiModelProperty(value = "飞书")
+    private String feiShu;
+
+    @ApiModelProperty(value = "DingDing")
+    private String dingDing;
 
     @ApiModelProperty(value = "失败后暂停")
     private Boolean pauseAfterFailure;

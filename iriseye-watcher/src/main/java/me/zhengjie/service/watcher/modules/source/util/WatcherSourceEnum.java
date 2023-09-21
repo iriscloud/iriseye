@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @SuppressWarnings({"unchecked","all"})
-public enum DataSourceEnum {
+public enum WatcherSourceEnum {
 
     /** mysql */
     MYSQL("mysql", "mysql", "com.mysql.jdbc.Driver", "`", "`", "'", "'"),
@@ -82,7 +82,7 @@ public enum DataSourceEnum {
 
     private static final String JDBC_URL_PREFIX = "jdbc:";
 
-    DataSourceEnum(String feature, String desc, String driver, String keywordPrefix, String keywordSuffix, String aliasPrefix, String aliasSuffix) {
+    WatcherSourceEnum(String feature, String desc, String driver, String keywordPrefix, String keywordSuffix, String aliasPrefix, String aliasSuffix) {
         this.feature = feature;
         this.desc = desc;
         this.driver = driver;
@@ -92,9 +92,9 @@ public enum DataSourceEnum {
         this.aliasSuffix = aliasSuffix;
     }
 
-    public static DataSourceEnum urlOf(String sourceUrl) {
+    public static WatcherSourceEnum urlOf(String sourceUrl) {
         String url = sourceUrl.toLowerCase().trim();
-        for (DataSourceEnum dataTypeEnum : values()) {
+        for (WatcherSourceEnum dataTypeEnum : values()) {
             if (url.startsWith(JDBC_URL_PREFIX + dataTypeEnum.feature)) {
                 try {
                     Class<?> aClass = Class.forName(dataTypeEnum.getDriver());

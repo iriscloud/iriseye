@@ -5,11 +5,11 @@ package me.zhengjie.service.watcher.modules.source.util;
  * @author wuhao
  * @createTime 2023-08-25
  */
-public enum DataSourceType {
+public enum WatcherSourceType {
     Prometheus("Prometheus"), ClickHouse("ClickHouse"), MySQL("MySQL");
     public String name;
 
-    DataSourceType(String name) {
+    WatcherSourceType(String name) {
         this.name = name;
     }
 }

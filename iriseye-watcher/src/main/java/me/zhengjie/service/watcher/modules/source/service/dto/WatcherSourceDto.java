@@ -15,31 +15,42 @@
  */
 package me.zhengjie.service.watcher.modules.source.service.dto;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
+import lombok.Getter;
+import lombok.Setter;
+import me.zhengjie.base.BaseDTO;
 
-import java.sql.Timestamp;
-import java.util.List;
+import java.io.Serializable;
 
 /**
 * @author zhanghouying
 * @date 2019-08-24
 */
-@Data
-public class DataSourceQueryCriteria {
+@Getter
+@Setter
+public class WatcherSourceDto extends BaseDTO implements Serializable {
 
 	/**
-	 * 模糊
+	 * id
 	 */
-    @Query(type = Query.Type.INNER_LIKE)
+    private String id;
+
+	/**
+	 * 数据库名称
+	 */
     private String name;
 
 	/**
-	 * 精确
+	 * 数据库连接地址
 	 */
-    @Query
     private String url;
 
-	@Query(type = Query.Type.BETWEEN)
-	private List<Timestamp> createTime;
+	/**
+	 * 数据库密码
+	 */
+    private String pwd;
+
+	/**
+	 * 用户名
+	 */
+    private String userName;
 }

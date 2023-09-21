@@ -18,6 +18,8 @@ package me.zhengjie.service.watcher.modules.source.util.task;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.service.watcher.modules.source.domain.RuleTask;
+import me.zhengjie.service.watcher.modules.source.service.WatcherSourceService;
+import me.zhengjie.utils.StringUtils;
 import org.quartz.*;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.stereotype.Component;
@@ -33,27 +35,30 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 @Slf4j
 @Component
-public class RuleTaskManage {
+public class RuleTaskManager {
 
     private static final String JOB_NAME = "TASK_";
 
     @Resource
     private Scheduler scheduler;
 
-    public void addJob(RuleTask quartzTask){
+    @Resource
+    private WatcherSourceService dataSourceService;
+
+    public void addJob(RuleTask ruleTask){
         try {
             // 构建job信息
             JobDetail jobDetail = JobBuilder.newJob(ExecutionTask.class).
-                    withIdentity(JOB_NAME + quartzTask.getId()).build();
-
+                    withIdentity(JOB_NAME + ruleTask.getId()).build();
+           
             //通过触发器名和cron 表达式创建 Trigger
             Trigger cronTrigger = newTrigger()
-                    .withIdentity(JOB_NAME + quartzTask.getId())
+                    .withIdentity(JOB_NAME + ruleTask.getId())
                     .startNow()
-                    .withSchedule(CronScheduleBuilder.cronSchedule(quartzTask.getCronExpression()))
+                    .withSchedule(getScheduleBuilder(ruleTask))
                     .build();
 
-            cronTrigger.getJobDataMap().put(RuleTask.TASK_KEY, quartzTask);
+            cronTrigger.getJobDataMap().put(RuleTask.TASK_KEY, ruleTask);
 
             //重置启动时间
             ((CronTriggerImpl)cronTrigger).setStartTime(new Date());
@@ -62,42 +67,52 @@ public class RuleTaskManage {
             scheduler.scheduleJob(jobDetail,cronTrigger);
 
             // 暂停任务
-            if (quartzTask.getIsPause()) {
-                pauseJob(quartzTask);
+            if (ruleTask.getIsPause()) {
+                pauseJob(ruleTask);
             }
         } catch (Exception e){
-            log.error("创建定时任务失败", e);
-            throw new BadRequestException("创建定时任务失败");
+            log.error("create task error:{}. ", ruleTask.getBeanName(), e);
+            throw new BadRequestException("create task error.");
         }
     }
 
+    private ScheduleBuilder getScheduleBuilder(RuleTask ruleTask){
+        ScheduleBuilder scheduleBuilder = null;
+        if (StringUtils.isNotBlank(ruleTask.getCronExpression())){
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(ruleTask.getCronExpression());
+        } else if (ruleTask.getCheckTime() > 0 && ruleTask.getDurationTime() > 0){
+            scheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForever((int) ruleTask.getCheckTime());
+        }
+        if (scheduleBuilder == null){
+            throw new BadRequestException("createTask Error, Not Set Rule Time Or Corn");
+        }
+        return scheduleBuilder;
+    }
     /**
      * 更新job cron表达式
-     * @param quartzJob /
+     * @param ruleTask /
      */
-    public void updateJobCron(RuleTask quartzJob){
+    public void updateJobCron(RuleTask ruleTask){
         try {
-            TriggerKey triggerKey = TriggerKey.triggerKey(JOB_NAME + quartzJob.getId());
-            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+            TriggerKey triggerKey = TriggerKey.triggerKey(JOB_NAME + ruleTask.getId());
+            Trigger trigger = scheduler.getTrigger(triggerKey);
             // 如果不存在则创建一个定时任务
             if(trigger == null){
-                addJob(quartzJob);
-                trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+                addJob(ruleTask);
+                trigger = scheduler.getTrigger(triggerKey);
             }
-            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression());
-            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
+            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(getScheduleBuilder(ruleTask)).build();
             //重置启动时间
             ((CronTriggerImpl)trigger).setStartTime(new Date());
-            trigger.getJobDataMap().put(RuleTask.TASK_KEY,quartzJob);
-
+            trigger.getJobDataMap().put(RuleTask.TASK_KEY,ruleTask);
             scheduler.rescheduleJob(triggerKey, trigger);
             // 暂停任务
-            if (quartzJob.getIsPause()) {
-                pauseJob(quartzJob);
+            if (ruleTask.getIsPause()) {
+                pauseJob(ruleTask);
             }
         } catch (Exception e){
-            log.error("更新定时任务失败", e);
-            throw new BadRequestException("更新定时任务失败");
+            log.error("updateTask error:{}", ruleTask.getTaskName(), e);
+            throw new BadRequestException("updateTask error " + ruleTask.getTaskName());
         }
 
     }
