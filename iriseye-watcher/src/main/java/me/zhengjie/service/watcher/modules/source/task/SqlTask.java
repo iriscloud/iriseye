@@ -15,6 +15,7 @@
  */
 package me.zhengjie.service.watcher.modules.source.task;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.RTask;
 import me.zhengjie.service.watcher.modules.source.domain.WatcherSource;
@@ -24,6 +25,8 @@ import me.zhengjie.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Sql Task
@@ -40,7 +43,9 @@ public class SqlTask implements WatcherTask{
         if (dataSource == null || StringUtils.isBlank(dataSource.getUrl())){
             return;
         }
-        ResultSet resultSet = SqlExecutor.executeSql(dataSource, ruleTask.getParams());
-        //resultSet.getA 
+        List<Map<String, Object>> rests = SqlExecutor.executeSql(dataSource, ruleTask.getParams());
+        //resultSet.getMetaData()
+        //resultSet.getA
+        System.out.println(JSONObject.toJSON(rests).toString());
     }
 }
