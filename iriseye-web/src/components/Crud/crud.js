@@ -179,7 +179,7 @@ function CRUD(options) {
       callVmHook(crud, CRUD.HOOK.afterToCU, crud.form)
     },
     /**
-     * 启动编辑
+     * 启动clone
      * @param {*} data 数据项
      */
     toClone(data) {

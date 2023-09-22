@@ -103,8 +103,8 @@
     </el-dialog>
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-      <el-table-column :selectable="checkboxT" type="selection"  />
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="编号"  />
+      <el-table-column :selectable="checkboxT" type="selection" />
+      <el-table-column :show-overflow-tooltip="true" prop="id" label="编号" />
       <el-table-column :show-overflow-tooltip="true" prop="taskName" label="名称" />
       <el-table-column :show-overflow-tooltip="true" prop="beanName" label="执行器" />
       <el-table-column :show-overflow-tooltip="true" prop="params" label="执行语句" />
@@ -117,7 +117,7 @@
       <el-table-column v-if="checkPer(['admin','timing:edit','timing:del'])" label="操作" width="300px" align="center" fixed="right">
         <template slot-scope="scope">
           <el-button v-permission="['admin','task:edit']" size="mini" style="margin-right: 3px;" type="text" @click="crud.toEdit(scope.row)">编辑</el-button>
-          <el-button v-permission="['admin','task:edit']" size="mini" style="margin-right: 3px;" type="text" @click="crud.toEdit(scope.row)">克隆</el-button>
+          <el-button v-permission="['admin','task:edit']" size="mini" style="margin-right: 3px;" type="text" @click="crud.toClone(scope.row)">克隆</el-button>
           <el-button v-permission="['admin','task:edit']" style="margin-left: -2px" type="text" size="mini" @click="execute(scope.row.id)">执行</el-button>
           <el-button v-permission="['admin','task:edit']" style="margin-left: 3px" type="text" size="mini" @click="updateStatus(scope.row.id,scope.row.isPause ? '恢复' : '暂停')">
             {{ scope.row.isPause ? '恢复' : '暂停' }}
