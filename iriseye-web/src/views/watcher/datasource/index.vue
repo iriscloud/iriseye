@@ -29,7 +29,22 @@
         <el-form-item label="连接名称" prop="name">
           <el-input v-model="form.name" style="width: 370px" />
         </el-form-item>
-        <el-form-item label="JDBC地址" prop="url">
+        <el-form-item label="数据源类型" prop="sourceTypeName">
+          <el-select
+            v-model="form.type"
+            style="width: 200px"
+            placeholder="请选择"
+            @change="changeSourceType"
+          >
+            <el-option
+              v-for="item in sourceTypeNames"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数据源" prop="url">
           <el-input v-model="form.url" style="width: 300px" />
           <el-button :loading="loading" type="success" @click="testConnectDataSource">测试</el-button>
         </el-form-item>
@@ -67,6 +82,7 @@
 </template>
 
 <script>
+import { getAllSourceTypeNames } from '@/api/watcher/datasource'
 import crudDataSource from '@/api/watcher/datasource'
 import { testDbConnect } from '@/api/watcher/connect'
 import eForm from './execute'
@@ -77,7 +93,7 @@ import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import DateRangePicker from '@/components/DateRangePicker'
 
-const defaultForm = { id: null, name: null, url: 'jdbc:mysql://', userName: null, pwd: null }
+const defaultForm = { id: null, name: null, type: null, url: 'jdbc:mysql://', userName: null, pwd: null }
 export default {
   name: 'DataSource',
   components: { eForm, pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
@@ -90,6 +106,7 @@ export default {
       currentRow: {},
       selectIndex: '',
       datasourceInfo: '',
+      sourceTypeNames: [],
       loading: false,
       permission: {
         add: ['admin', 'datasource:add'],
@@ -112,6 +129,9 @@ export default {
       }
     }
   },
+  created() {
+    this.getSourceTypeNames()
+  },
   methods: {
     testConnectDataSource() {
       this.$refs['form'].validate((valid) => {
@@ -128,6 +148,22 @@ export default {
     },
     execute() {
       this.$refs.execute.dialog = true
+    },
+    getSourceTypeNames() {
+      getAllSourceTypeNames().then(res => {
+        this.sourceTypeNames = res.content
+      }).catch(() => { })
+    },
+    changeSourceType(value) {
+      for (let item in this.sourceTypeNames) {
+        console.log(this.sourceTypeNames[item].name)
+        console.log(value)
+        if (value === this.sourceTypeNames[item].name) {
+          defaultForm.url = this.sourceTypeNames[item].urlDesc
+          this.form.url = this.sourceTypeNames[item].urlDesc
+          console.log(defaultForm.url)
+        }
+      }
     },
     handleCurrentChange(selection) {
       this.crud.selections = selection

@@ -34,6 +34,7 @@ public interface WatcherSourceService {
 
     /**
      * 分页查询
+     *
      * @param criteria 条件
      * @param pageable 分页参数
      * @return /
@@ -42,6 +43,7 @@ public interface WatcherSourceService {
 
     /**
      * 查询全部
+     *
      * @param criteria 条件
      * @return /
      */
@@ -49,13 +51,15 @@ public interface WatcherSourceService {
 
     /**
      * 查询全部数据源名称
+     *
      * @param criteria 条件
      * @return /
      */
     PageResult<WatcherSourceDto> queryAllNames(WatcherSourceQueryCriteria criteria);
-
+    
     /**
      * 根据ID查询
+     *
      * @param id /
      * @return /
      */
@@ -63,7 +67,7 @@ public interface WatcherSourceService {
 
     /**
      * findByName
-     * 
+     *
      * @param name
      * @return
      */
@@ -71,35 +75,40 @@ public interface WatcherSourceService {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(WatcherSource resources);
 
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(WatcherSource resources);
 
     /**
      * 删除
+     *
      * @param ids /
      */
     void delete(Set<String> ids);
 
-	/**
-	 * 测试连接数据库
-	 * @param resources /
-	 * @return /
-	 */
-	boolean testConnection(WatcherSource resources);
+    /**
+     * 测试连接数据库
+     *
+     * @param resources /
+     * @return /
+     */
+    boolean testConnection(WatcherSource resources);
 
     /**
      * 导出数据
+     *
      * @param queryAll /
      * @param response /
      * @throws IOException e
      */
     void download(List<WatcherSourceDto> queryAll, HttpServletResponse response) throws IOException;
-    
+
 }

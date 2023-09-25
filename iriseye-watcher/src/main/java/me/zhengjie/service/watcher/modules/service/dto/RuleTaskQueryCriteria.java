@@ -30,10 +30,10 @@ public class RuleTaskQueryCriteria {
 
     @Query(type = Query.Type.INNER_LIKE)
     private String taskName;
-    
+
     @Query
     private Long groupId = 0L;
-    
+
     @Query
     private Boolean isSuccess;
 

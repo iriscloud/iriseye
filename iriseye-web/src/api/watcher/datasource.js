@@ -45,4 +45,17 @@ export function getAllSourceNames() {
   })
 }
 
+export function getAllSourceTypeNames() {
+  const params = {
+    page: 0,
+    size: 9999,
+    enabled: true
+  }
+  return request({
+    url: 'api/datasource/types',
+    method: 'get',
+    params
+  })
+}
+
 export default { add, edit, del, testDbConnection }

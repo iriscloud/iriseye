@@ -23,7 +23,6 @@ import me.zhengjie.service.modules.message.service.dto.MessageNotifyDto;
 import me.zhengjie.service.watcher.modules.domain.RuleTask;
 import me.zhengjie.service.watcher.modules.domain.WatcherSource;
 import me.zhengjie.service.watcher.modules.task.sql.SqlExecutor;
-import me.zhengjie.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -23,10 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.service.watcher.modules.domain.WatcherSource;
 import me.zhengjie.service.watcher.modules.repository.WatcherSourceRepository;
 import me.zhengjie.service.watcher.modules.service.WatcherSourceService;
-import me.zhengjie.service.watcher.modules.service.mapstruct.WatcherSourceMapper;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceDto;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceQueryCriteria;
+import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceTypeDto;
+import me.zhengjie.service.watcher.modules.service.mapstruct.WatcherSourceMapper;
 import me.zhengjie.service.watcher.modules.task.sql.SqlExecutor;
+import me.zhengjie.service.watcher.modules.util.DataSourceType;
 import me.zhengjie.utils.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,9 +41,9 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
-* @author zhanghouying
-* @date 2019-08-24
-*/
+ * @author zhanghouying
+ * @date 2019-08-24
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -49,19 +51,19 @@ public class WatcherSourceServiceImpl implements WatcherSourceService {
 
     private final WatcherSourceRepository dataSourceRepository;
     private final WatcherSourceMapper dataSourceMapper;
-    
+
     private static Cache<String, WatcherSource> CACHE = Caffeine.newBuilder().maximumSize(1000)
             .expireAfterWrite(2, TimeUnit.MINUTES).build();
 
     @Override
-    public PageResult<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria, Pageable pageable){
-        Page<WatcherSource> page = dataSourceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+    public PageResult<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria, Pageable pageable) {
+        Page<WatcherSource> page = dataSourceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
         return PageUtil.toPage(page.map(dataSourceMapper::toDto));
     }
 
     @Override
-    public List<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria){
-        return dataSourceMapper.toDto(dataSourceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+    public List<WatcherSourceDto> queryAll(WatcherSourceQueryCriteria criteria) {
+        return dataSourceMapper.toDto(dataSourceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
     }
 
     @Override
@@ -74,23 +76,24 @@ public class WatcherSourceServiceImpl implements WatcherSourceService {
         PageResult<WatcherSourceDto> pageResult = PageUtil.toPage(taskDtos, taskDtos.size());
         return pageResult;
     }
+    
 
     @Override
     public WatcherSourceDto findById(String id) {
         WatcherSource database = dataSourceRepository.findById(id).orElseGet(WatcherSource::new);
-        ValidationUtil.isNull(database.getId(),"Database","id",id);
+        ValidationUtil.isNull(database.getId(), "Database", "id", id);
         return dataSourceMapper.toDto(database);
     }
 
     @Override
     public WatcherSource findByName(String name) {
-       return CACHE.get(name, s -> {
-           WatcherSource database = dataSourceRepository.findByName(name);
-           if (database == null) {
-               database = new WatcherSource();
-           }
-           return database;
-       });
+        return CACHE.get(name, s -> {
+            WatcherSource database = dataSourceRepository.findByName(name);
+            if (database == null) {
+                database = new WatcherSource();
+            }
+            return database;
+        });
     }
 
     @Override
@@ -105,9 +108,9 @@ public class WatcherSourceServiceImpl implements WatcherSourceService {
     @Transactional(rollbackFor = Exception.class)
     public void update(WatcherSource resources) {
         WatcherSource database = dataSourceRepository.findById(resources.getId()).orElseGet(WatcherSource::new);
-        ValidationUtil.isNull(database.getId(),"Database","id",resources.getId());
+        ValidationUtil.isNull(database.getId(), "Database", "id", resources.getId());
         database.copy(resources);
-        CACHE.put(resources.getName(),resources);
+        CACHE.put(resources.getName(), resources);
         dataSourceRepository.save(database);
     }
 
@@ -119,21 +122,21 @@ public class WatcherSourceServiceImpl implements WatcherSourceService {
         }
     }
 
-	@Override
-	public boolean testConnection(WatcherSource resources) {
-		try {
-			return SqlExecutor.testConnection(resources.getUrl(), resources.getUserName(), resources.getPwd());
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			return false;
-		}
-	}
+    @Override
+    public boolean testConnection(WatcherSource resources) {
+        try {
+            return SqlExecutor.testConnection(resources.getUrl(), resources.getUserName(), resources.getPwd());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
 
     @Override
     public void download(List<WatcherSourceDto> queryAll, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (WatcherSourceDto databaseDto : queryAll) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("数据库名称", databaseDto.getName());
             map.put("数据库连接地址", databaseDto.getUrl());
             map.put("用户名", databaseDto.getUserName());
@@ -142,5 +145,5 @@ public class WatcherSourceServiceImpl implements WatcherSourceService {
         }
         FileUtil.downloadExcel(list, response);
     }
-    
+
 }

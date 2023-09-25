@@ -21,8 +21,10 @@ import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.service.watcher.modules.domain.WatcherSource;
 import me.zhengjie.service.watcher.modules.service.WatcherSourceService;
+import me.zhengjie.service.watcher.modules.service.WatcherSourceTypeService;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceDto;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceQueryCriteria;
+import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceTypeDto;
 import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -46,6 +48,7 @@ import java.util.Set;
 public class WatcherSourceController {
 	
     private final WatcherSourceService dataSourceService;
+    private final WatcherSourceTypeService sourceTypeService;
 
 	@ApiOperation("导出数据库数据")
 	@GetMapping(value = "/download")
@@ -64,8 +67,15 @@ public class WatcherSourceController {
     @ApiOperation("查询数据源名称")
     @GetMapping(value = "/names")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<WatcherSourceDto>> queryQuartzRTask(WatcherSourceQueryCriteria criteria){
+    public ResponseEntity<PageResult<WatcherSourceDto>> queryWatcherSourceDtos(WatcherSourceQueryCriteria criteria){
         return new ResponseEntity<>(dataSourceService.queryAllNames(criteria), HttpStatus.OK);
+    }
+
+    @ApiOperation("查询数据源名称")
+    @GetMapping(value = "/types")
+    @PreAuthorize("@el.check('tasks:list')")
+    public ResponseEntity<PageResult<WatcherSourceTypeDto>> queryWatcherSourceTypes(WatcherSourceQueryCriteria criteria){
+        return new ResponseEntity<>(sourceTypeService.queryAllTypeNames(), HttpStatus.OK);
     }
 
 

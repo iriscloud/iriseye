@@ -35,6 +35,7 @@ public interface RuleTaskService {
 
     /**
      * 分页查询
+     *
      * @param criteria 条件
      * @param pageable 分页参数
      * @return /
@@ -43,6 +44,7 @@ public interface RuleTaskService {
 
     /**
      * 查询全部
+     *
      * @param criteria 条件
      * @return /
      */
@@ -50,6 +52,7 @@ public interface RuleTaskService {
 
     /**
      * 分页查询日志
+     *
      * @param criteria 条件
      * @param pageable 分页参数
      * @return /
@@ -58,6 +61,7 @@ public interface RuleTaskService {
 
     /**
      * 查询全部
+     *
      * @param criteria 条件
      * @return /
      */
@@ -65,24 +69,28 @@ public interface RuleTaskService {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(RuleTask resources);
 
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(RuleTask resources);
 
     /**
      * 删除任务
+     *
      * @param ids /
      */
     void delete(Set<Long> ids);
 
     /**
      * 根据ID查询
+     *
      * @param id ID
      * @return /
      */
@@ -90,18 +98,21 @@ public interface RuleTaskService {
 
     /**
      * 更改定时任务状态
+     *
      * @param quartzJob /
      */
     void updateIsPause(RuleTask quartzJob);
 
     /**
      * 立即执行定时任务
+     *
      * @param quartzJob /
      */
     void execution(RuleTask quartzJob);
 
     /**
      * 导出定时任务
+     *
      * @param queryAll 待导出的数据
      * @param response /
      * @throws IOException /
@@ -110,14 +121,16 @@ public interface RuleTaskService {
 
     /**
      * 导出定时任务日志
+     *
      * @param queryAllLog 待导出的数据
-     * @param response /
+     * @param response    /
      * @throws IOException /
      */
     void downloadLog(List<RuleTaskLog> queryAllLog, HttpServletResponse response) throws IOException;
 
     /**
      * 执行子任务
+     *
      * @param tasks /
      * @throws InterruptedException /
      */

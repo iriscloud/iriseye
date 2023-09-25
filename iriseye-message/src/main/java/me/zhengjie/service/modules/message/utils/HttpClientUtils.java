@@ -24,13 +24,43 @@ public class HttpClientUtils {
     public static void sendHttpRequest(String url, String body) {
         Map<String, String> maps = new HashMap<>();
         maps.put("Content-Type", "application/json;charset=UTF-8");
-        sendHttpRequest(url, maps, body);
+        sendHttpRequest(url, maps, body, new HttpAsyncCompletionHandler(System.currentTimeMillis(), url));
     }
 
-    public static class AsyncCompletionHandler {
+
+    public static void sendHttpRequest(String url, Map<String, String> headers, String body) {
+        sendHttpRequest(url, headers, body, new HttpAsyncCompletionHandler(System.currentTimeMillis(), url));
+    }
+
+
+    public static void sendHttpRequest(String url, Map<String, String> headers, String body, AsyncCompletionHandler handler) {
+
+        try {
+            LOGGER.info("send begin url:{} body:{}", url, body);
+            long beginTime = System.currentTimeMillis();
+            RequestBuilder requestBuilder = new RequestBuilder("POST").setUrl(url);
+            requestBuilder.setBody(body.getBytes(StandardCharsets.UTF_8));
+            Set<Map.Entry<String, String>> en = headers.entrySet();
+            for (Map.Entry<String, String> entry : en) {
+                requestBuilder.setHeader(entry.getKey(), entry.getValue());
+            }
+            AsyncHttpClient httpClient = HttpClientManager.getInstance().getHttpClient(DEFAULT_POOL_NAME);
+            httpClient.executeRequest(requestBuilder.build(), handler);
+
+        } catch (Exception e) {
+            LOGGER.error("send error, url:{} body:{} ", url, body);
+        }
+    }
+
+    public static class HttpAsyncCompletionHandler extends AsyncCompletionHandler {
         private long beginTime;
         private String url;
-        
+
+        public HttpAsyncCompletionHandler(long beginTime, String url) {
+            this.beginTime = beginTime;
+            this.url = url;
+        }
+
         @Override
         public Response onCompleted(Response resp) {
             long handleTime = System.currentTimeMillis() - beginTime;
@@ -47,22 +77,4 @@ public class HttpClientUtils {
         }
 
     };
-    public static void sendHttpRequest(String url, Map<String, String> headers, String body, AsyncCompletionHandler handler) {
-
-        try {
-            LOGGER.info("send begin url:{} body:{}", url, body);
-            long beginTime = System.currentTimeMillis();
-            RequestBuilder requestBuilder = new RequestBuilder("POST").setUrl(url);
-            requestBuilder.setBody(body.getBytes(StandardCharsets.UTF_8));
-            Set<Map.Entry<String, String>> en = headers.entrySet();
-            for (Map.Entry<String, String> entry : en) {
-                requestBuilder.setHeader(entry.getKey(), entry.getValue());
-            }
-            AsyncHttpClient httpClient = HttpClientManager.getInstance().getHttpClient(DEFAULT_POOL_NAME);
-           // httpClient.executeRequest(requestBuilder.build(), handler);
-
-        } catch (Exception e) {
-            LOGGER.error("send error, url:{} body:{} ", url, body);
-        }
-    }
 }

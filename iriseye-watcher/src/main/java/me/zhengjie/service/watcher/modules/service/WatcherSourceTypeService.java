@@ -13,33 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package me.zhengjie.service.watcher.modules.service.dto;
+package me.zhengjie.service.watcher.modules.service;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-
-import java.sql.Timestamp;
-import java.util.List;
+import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceTypeDto;
+import me.zhengjie.utils.PageResult;
 
 /**
- * @author zhanghouying
+ * @author ZhangHouYing
  * @date 2019-08-24
  */
-@Data
-public class WatcherSourceQueryCriteria {
+public interface WatcherSourceTypeService {
+
 
     /**
-     * 模糊
+     * 查询全部数据源类型
+     *
+     * @return /
      */
-    @Query(type = Query.Type.INNER_LIKE)
-    private String name;
+    PageResult<WatcherSourceTypeDto> queryAllTypeNames();
 
-    /**
-     * 精确
-     */
-    @Query
-    private String url;
-
-    @Query(type = Query.Type.BETWEEN)
-    private List<Timestamp> createTime;
 }
