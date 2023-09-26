@@ -24,8 +24,8 @@ import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.service.watcher.modules.domain.RuleTask;
 import me.zhengjie.service.watcher.modules.domain.RuleTaskLog;
 import me.zhengjie.service.watcher.modules.service.RuleTaskService;
-import me.zhengjie.service.watcher.modules.service.dto.RuleTaskQueryCriteria;
 import me.zhengjie.service.watcher.modules.service.dto.RuleTaskDto;
+import me.zhengjie.service.watcher.modules.service.dto.RuleTaskQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.SpringContextHolder;
 import org.springframework.data.domain.Pageable;
@@ -56,14 +56,14 @@ public class RuleTaskController {
     @ApiOperation("查询定时任务")
     @GetMapping
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<RuleTask>> queryQuartzJob(RuleTaskQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(quartzTaskService.queryAll(criteria,pageable), HttpStatus.OK);
+    public ResponseEntity<PageResult<RuleTask>> queryQuartzJob(RuleTaskQueryCriteria criteria, Pageable pageable) {
+        return new ResponseEntity<>(quartzTaskService.queryAll(criteria, pageable), HttpStatus.OK);
     }
 
     @ApiOperation("查询任务类型")
     @GetMapping(value = "/names")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<RuleTaskDto>> queryQuartzRTask(RuleTaskQueryCriteria criteria, Pageable pageable){
+    public ResponseEntity<PageResult<RuleTaskDto>> queryQuartzRTask(RuleTaskQueryCriteria criteria, Pageable pageable) {
         return new ResponseEntity<PageResult<RuleTaskDto>>(quartzTaskService.getAllRTasks(), HttpStatus.OK);
     }
 
@@ -84,17 +84,17 @@ public class RuleTaskController {
     @ApiOperation("查询任务执行日志")
     @GetMapping(value = "/logs")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<RuleTaskLog>> queryQuartzJobLog(RuleTaskQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(quartzTaskService.queryAllLog(criteria,pageable), HttpStatus.OK);
+    public ResponseEntity<PageResult<RuleTaskLog>> queryQuartzJobLog(RuleTaskQueryCriteria criteria, Pageable pageable) {
+        return new ResponseEntity<>(quartzTaskService.queryAllLog(criteria, pageable), HttpStatus.OK);
     }
 
     @Log("新增定时任务")
     @ApiOperation("新增定时任务")
     @PostMapping
     @PreAuthorize("@el.check('tasks:add')")
-    public ResponseEntity<Object> createQuartzJob(@Validated @RequestBody RuleTask resources){
+    public ResponseEntity<Object> createQuartzJob(@Validated @RequestBody RuleTask resources) {
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
         // 验证Bean是不是合法的，合法的定时任务 Bean 需要用 @Service 定义
         checkBean(resources.getBeanName());
@@ -106,7 +106,7 @@ public class RuleTaskController {
     @ApiOperation("修改定时任务")
     @PutMapping
     @PreAuthorize("@el.check('tasks:edit')")
-    public ResponseEntity<Object> updateQuartzJob(@Validated(RuleTask.Update.class) @RequestBody RuleTask resources){
+    public ResponseEntity<Object> updateQuartzJob(@Validated(RuleTask.Update.class) @RequestBody RuleTask resources) {
         // 验证Bean是不是合法的，合法的定时任务 Bean 需要用 @Service 定义
         checkBean(resources.getBeanName());
         quartzTaskService.update(resources);
@@ -117,7 +117,7 @@ public class RuleTaskController {
     @ApiOperation("更改定时任务状态")
     @PutMapping(value = "/{id}")
     @PreAuthorize("@el.check('tasks:edit')")
-    public ResponseEntity<Object> updateQuartzJobStatus(@PathVariable Long id){
+    public ResponseEntity<Object> updateQuartzJobStatus(@PathVariable Long id) {
         quartzTaskService.updateIsPause(quartzTaskService.findById(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -126,7 +126,7 @@ public class RuleTaskController {
     @ApiOperation("执行定时任务")
     @PutMapping(value = "/exec/{id}")
     @PreAuthorize("@el.check('tasks:edit')")
-    public ResponseEntity<Object> executionQuartzJob(@PathVariable Long id){
+    public ResponseEntity<Object> executionQuartzJob(@PathVariable Long id) {
         quartzTaskService.execution(quartzTaskService.findById(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -135,13 +135,13 @@ public class RuleTaskController {
     @ApiOperation("删除定时任务")
     @DeleteMapping
     @PreAuthorize("@el.check('tasks:del')")
-    public ResponseEntity<Object> deleteQuartzJob(@RequestBody Set<Long> ids){
+    public ResponseEntity<Object> deleteQuartzJob(@RequestBody Set<Long> ids) {
         quartzTaskService.delete(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void checkBean(String beanName){
-        if(!SpringContextHolder.getAllRTask().contains(beanName)){
+    private void checkBean(String beanName) {
+        if (!SpringContextHolder.getAllRTask().contains(beanName)) {
             throw new BadRequestException("非法的 Bean，请重新输入！");
         }
     }

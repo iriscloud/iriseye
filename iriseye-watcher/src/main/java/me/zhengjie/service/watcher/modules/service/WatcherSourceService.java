@@ -56,7 +56,7 @@ public interface WatcherSourceService {
      * @return /
      */
     PageResult<WatcherSourceDto> queryAllNames(WatcherSourceQueryCriteria criteria);
-    
+
     /**
      * 根据ID查询
      *

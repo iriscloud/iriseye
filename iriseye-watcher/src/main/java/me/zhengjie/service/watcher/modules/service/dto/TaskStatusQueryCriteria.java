@@ -13,16 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package me.zhengjie.service.watcher.modules.repository;
+package me.zhengjie.service.watcher.modules.service.dto;
 
-import me.zhengjie.service.watcher.modules.domain.RuleTaskLog;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import lombok.Data;
+import me.zhengjie.annotation.Query;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author Zheng Jie
- * @date 2019-01-07
+ * @date 2019-6-4 10:33:02
  */
-public interface RuleTaskLogRepository extends JpaRepository<RuleTaskLog, Long>, JpaSpecificationExecutor<RuleTaskLog> {
+@Data
+public class TaskStatusQueryCriteria {
 
+    @Query(type = Query.Type.INNER_LIKE)
+    private String taskName;
+
+    @Query
+    private Long groupId = 0L;
+
+    @Query
+    private Boolean isSuccess;
+
+    @Query(type = Query.Type.BETWEEN)
+    private List<Timestamp> createTime;
 }

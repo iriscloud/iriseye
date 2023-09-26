@@ -25,10 +25,8 @@ import me.zhengjie.service.watcher.modules.repository.WatcherSourceRepository;
 import me.zhengjie.service.watcher.modules.service.WatcherSourceService;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceDto;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceQueryCriteria;
-import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceTypeDto;
 import me.zhengjie.service.watcher.modules.service.mapstruct.WatcherSourceMapper;
 import me.zhengjie.service.watcher.modules.task.sql.SqlExecutor;
-import me.zhengjie.service.watcher.modules.util.DataSourceType;
 import me.zhengjie.utils.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -76,7 +74,7 @@ public class WatcherSourceServiceImpl implements WatcherSourceService {
         PageResult<WatcherSourceDto> pageResult = PageUtil.toPage(taskDtos, taskDtos.size());
         return pageResult;
     }
-    
+
 
     @Override
     public WatcherSourceDto findById(String id) {

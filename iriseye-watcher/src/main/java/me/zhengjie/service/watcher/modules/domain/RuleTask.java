@@ -63,25 +63,37 @@ public class RuleTask extends BaseEntity implements Serializable {
     @NotBlank
     @ApiModelProperty(value = "Bean名称")
     private String beanName;
-    
+
     @ApiModelProperty(value = "方法名称")
     private String methodName = "run";
-    
+
     @ApiModelProperty(value = "运行参数")
     private String params;
-    
+
     @ApiModelProperty(value = "cron表达式")
     private String cronExpression;
-    
+
     @ApiModelProperty(value = "持续时间")
-    private  long checkTime;
-    
+    private long checkTime;
+
     @ApiModelProperty(value = "持续时间")
-    private  long durationTime;
-    
+    private long durationTime;
+
+    @ApiModelProperty(value = "留观时长")
+    private long viewTime;
+
+    @ApiModelProperty(value = "发送时间间隔")
+    private long sendIntervalTime;
+
+    @ApiModelProperty(value = "最大发送次数")
+    private long maxSendCount;
+
+    @ApiModelProperty(value = "是否发送恢复通知")
+    private boolean sendRecovery;
+
     @ApiModelProperty(value = "开始时间")
     private long startTime;
-    
+
     @ApiModelProperty(value = "结束时间")
     private long endTime;
 

@@ -14,20 +14,20 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
-* @author Zheng Jie
-* @date 2019-04-10
-*/
+ * @author Zheng Jie
+ * @date 2019-04-10
+ */
 @Entity
 @Getter
 @Setter
-@Table(name="watcher_datasource_type")
+@Table(name = "watcher_datasource_type")
 public class WatcherSourceType extends BaseEntity implements Serializable {
 
     @Id
     @Column(name = "wd_id", length = 64)
     @ApiModelProperty(value = "ID", hidden = true)
     private String id;
-    
+
     @ApiModelProperty(value = "数据源名称")
     @Column(length = 64)
     private String name;
@@ -40,9 +40,8 @@ public class WatcherSourceType extends BaseEntity implements Serializable {
     @Column(length = 64)
     private String urlDesc;
 
-   
 
-    public void copy(WatcherSourceType source){
-        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+    public void copy(WatcherSourceType source) {
+        BeanUtil.copyProperties(source, this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

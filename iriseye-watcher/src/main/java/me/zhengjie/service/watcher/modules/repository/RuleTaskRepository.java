@@ -25,10 +25,11 @@ import java.util.List;
  * @author Zheng Jie
  * @date 2019-01-07
  */
-public interface RuleTaskRepository extends JpaRepository<RuleTask,Long>, JpaSpecificationExecutor<RuleTask> {
+public interface RuleTaskRepository extends JpaRepository<RuleTask, Long>, JpaSpecificationExecutor<RuleTask> {
 
     /**
      * 查询启用的任务
+     *
      * @return List
      */
     List<RuleTask> findByIsPauseIsFalse();

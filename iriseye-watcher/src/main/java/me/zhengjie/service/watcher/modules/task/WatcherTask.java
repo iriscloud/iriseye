@@ -14,7 +14,7 @@ public interface WatcherTask {
 
     /**
      * run
-     * 
+     *
      * @param ruleTask
      * @param dataSource
      */
@@ -22,11 +22,12 @@ public interface WatcherTask {
 
     /**
      * check
+     *
      * @param dataSource
      * @return
      */
-    default boolean check(WatcherSource dataSource){
-        if (dataSource == null || StringUtils.isBlank(dataSource.getUrl())){
+    default boolean check(WatcherSource dataSource) {
+        if (dataSource == null || StringUtils.isBlank(dataSource.getUrl())) {
             return false;
         }
         return true;

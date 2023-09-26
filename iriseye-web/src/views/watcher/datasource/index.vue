@@ -8,19 +8,7 @@
         <date-range-picker v-model="query.createTime" class="date-item" />
         <rrOperation />
       </div>
-      <crudOperation :permission="permission">
-        <el-button
-          slot="right"
-          v-permission="['admin','datasource:add']"
-          :disabled="!selectIndex"
-          class="filter-item"
-          size="mini"
-          type="warning"
-          icon="el-icon-upload"
-          @click="execute"
-        >执行脚本
-        </el-button>
-      </crudOperation>
+      <crudOperation :permission="permission" />
     </div>
     <!--表单组件-->
     <eForm ref="execute" :datasource-info="currentRow" />
@@ -63,7 +51,7 @@
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" highlight-current-row stripe style="width: 100%" @selection-change="handleCurrentChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="name" width="130px" label="数据库名称" />
+      <el-table-column prop="name" width="130px" label="数据源名称" />
       <el-table-column prop="url" label="连接地址" />
       <el-table-column prop="userName" width="200px" label="用户名" />
       <el-table-column prop="createTime" width="200px" label="创建日期" />
@@ -155,7 +143,7 @@ export default {
       }).catch(() => { })
     },
     changeSourceType(value) {
-      for (let item in this.sourceTypeNames) {
+      for (const item in this.sourceTypeNames) {
         console.log(this.sourceTypeNames[item].name)
         console.log(value)
         if (value === this.sourceTypeNames[item].name) {

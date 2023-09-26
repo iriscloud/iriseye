@@ -43,7 +43,7 @@ public class RuleTaskRunnable implements Callable<Object> {
         this.ruleTask = ruleTask;
         this.dataSource = dataSource;
         this.target = SpringContextHolder.getBean(ruleTask.getBeanName());
-        String methodStr = StringUtils.isNoneBlank(ruleTask.getMethodName())? ruleTask.getMethodName() : DEFAULT_METHOD;
+        String methodStr = StringUtils.isNoneBlank(ruleTask.getMethodName()) ? ruleTask.getMethodName() : DEFAULT_METHOD;
         this.method = target.getClass().getDeclaredMethod(methodStr, RuleTask.class, WatcherSource.class);
     }
 

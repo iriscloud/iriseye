@@ -31,25 +31,27 @@ import java.util.Map;
 
 /**
  * Sql Task
+ *
  * @author Zheng Jie
  * @date 2019-01-08
  */
 @Slf4j
 @RTask
 @Service("SqlTask")
-public class SqlTask implements WatcherTask{
+public class SqlTask implements WatcherTask {
     @Resource
     private MessageService messageService;
+
     @Override
     public void run(RuleTask ruleTask, WatcherSource dataSource) {
-        if (!check(dataSource)){
+        if (!check(dataSource)) {
             return;
         }
         List<Map<String, Object>> rests = SqlExecutor.executeSql(dataSource, ruleTask.getParams());
         //resultSet.getMetaData()
         //resultSet.getA
         System.out.println(JSONObject.toJSON(rests).toString());
-        if (rests.size() > 0){
+        if (rests.size() > 0) {
             MessageNotifyDto messageNotify = MessageNotifyDto.builder()
                     .setUrl(ruleTask.getFeiShu())
                     .setType("log")

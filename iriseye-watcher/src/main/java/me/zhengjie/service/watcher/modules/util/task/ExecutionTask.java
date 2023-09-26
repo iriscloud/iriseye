@@ -18,8 +18,8 @@ package me.zhengjie.service.watcher.modules.util.task;
 import me.zhengjie.service.watcher.modules.domain.RuleTask;
 import me.zhengjie.service.watcher.modules.domain.RuleTaskLog;
 import me.zhengjie.service.watcher.modules.repository.RuleTaskLogRepository;
-import me.zhengjie.service.watcher.modules.service.WatcherSourceService;
 import me.zhengjie.service.watcher.modules.service.RuleTaskService;
+import me.zhengjie.service.watcher.modules.service.WatcherSourceService;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.SpringContextHolder;
 import me.zhengjie.utils.StringUtils;
@@ -35,6 +35,7 @@ import java.util.concurrent.Future;
 
 /**
  * 参考人人开源，<a href="https://gitee.com/renrenio/renren-security">...</a>
+ *
  * @author /
  * @date 2019-01-07
  */
@@ -45,7 +46,7 @@ public class ExecutionTask extends QuartzJobBean {
 
     // 此处仅供参考，可根据任务执行情况自定义线程池参数
     private final ThreadPoolTaskExecutor executor = SpringContextHolder.getBean("elAsync");
-    
+
 
     @Override
     public void executeInternal(JobExecutionContext context) {
@@ -73,14 +74,14 @@ public class ExecutionTask extends QuartzJobBean {
             future.get();
             long times = System.currentTimeMillis() - startTime;
             log.setTime(times);
-            if(StringUtils.isNotBlank(uuid)) {
+            if (StringUtils.isNotBlank(uuid)) {
                 redisUtils.set(uuid, true);
             }
             // 任务状态
             log.setIsSuccess(true);
             logger.info("任务执行成功，任务名称：" + quartzJob.getTaskName() + ", 执行时间：" + times + "毫秒");
         } catch (Exception e) {
-            if(StringUtils.isNotBlank(uuid)) {
+            if (StringUtils.isNotBlank(uuid)) {
                 redisUtils.set(uuid, false);
             }
             logger.error("任务执行失败，任务名称：" + quartzJob.getTaskName());
@@ -90,7 +91,7 @@ public class ExecutionTask extends QuartzJobBean {
             log.setIsSuccess(false);
             log.setExceptionDetail(ThrowableUtil.getStackTrace(e));
             // 任务如果失败了则暂停
-            if(quartzJob.getPauseAfterFailure() != null && quartzJob.getPauseAfterFailure()){
+            if (quartzJob.getPauseAfterFailure() != null && quartzJob.getPauseAfterFailure()) {
                 quartzJob.setIsPause(false);
                 //更新状态
                 taskService.updateIsPause(quartzJob);

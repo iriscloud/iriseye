@@ -38,43 +38,43 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
-* @author zhanghouying
-* @date 2019-08-24
-*/
+ * @author zhanghouying
+ * @date 2019-08-24
+ */
 @Api(tags = "监控：数据源管理")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/datasource")
 public class WatcherSourceController {
-	
+
     private final WatcherSourceService dataSourceService;
     private final WatcherSourceTypeService sourceTypeService;
 
-	@ApiOperation("导出数据库数据")
-	@GetMapping(value = "/download")
-	@PreAuthorize("@el.check('datasource:list')")
-	public void exportDatabase(HttpServletResponse response, WatcherSourceQueryCriteria criteria) throws IOException {
-		dataSourceService.download(dataSourceService.queryAll(criteria), response);
-	}
+    @ApiOperation("导出数据库数据")
+    @GetMapping(value = "/download")
+    @PreAuthorize("@el.check('datasource:list')")
+    public void exportDatabase(HttpServletResponse response, WatcherSourceQueryCriteria criteria) throws IOException {
+        dataSourceService.download(dataSourceService.queryAll(criteria), response);
+    }
 
     @ApiOperation(value = "查询数据库")
     @GetMapping
-	@PreAuthorize("@el.check('datasource:list')")
-    public ResponseEntity<PageResult<WatcherSourceDto>> queryDatabase(WatcherSourceQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(dataSourceService.queryAll(criteria,pageable),HttpStatus.OK);
+    @PreAuthorize("@el.check('datasource:list')")
+    public ResponseEntity<PageResult<WatcherSourceDto>> queryDatabase(WatcherSourceQueryCriteria criteria, Pageable pageable) {
+        return new ResponseEntity<>(dataSourceService.queryAll(criteria, pageable), HttpStatus.OK);
     }
 
     @ApiOperation("查询数据源名称")
     @GetMapping(value = "/names")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<WatcherSourceDto>> queryWatcherSourceDtos(WatcherSourceQueryCriteria criteria){
+    public ResponseEntity<PageResult<WatcherSourceDto>> queryWatcherSourceDtos(WatcherSourceQueryCriteria criteria) {
         return new ResponseEntity<>(dataSourceService.queryAllNames(criteria), HttpStatus.OK);
     }
 
     @ApiOperation("查询数据源名称")
     @GetMapping(value = "/types")
     @PreAuthorize("@el.check('tasks:list')")
-    public ResponseEntity<PageResult<WatcherSourceTypeDto>> queryWatcherSourceTypes(WatcherSourceQueryCriteria criteria){
+    public ResponseEntity<PageResult<WatcherSourceTypeDto>> queryWatcherSourceTypes(WatcherSourceQueryCriteria criteria) {
         return new ResponseEntity<>(sourceTypeService.queryAllTypeNames(), HttpStatus.OK);
     }
 
@@ -82,17 +82,17 @@ public class WatcherSourceController {
     @Log("新增数据库")
     @ApiOperation(value = "新增数据库")
     @PostMapping
-	@PreAuthorize("@el.check('datasource:add')")
-    public ResponseEntity<Object> createDatabase(@Validated @RequestBody WatcherSource resources){
-		dataSourceService.create(resources);
+    @PreAuthorize("@el.check('datasource:add')")
+    public ResponseEntity<Object> createDatabase(@Validated @RequestBody WatcherSource resources) {
+        dataSourceService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Log("修改数据库")
     @ApiOperation(value = "修改数据库")
     @PutMapping
-	@PreAuthorize("@el.check('datasource:edit')")
-    public ResponseEntity<Object> updateDatabase(@Validated @RequestBody WatcherSource resources){
+    @PreAuthorize("@el.check('datasource:edit')")
+    public ResponseEntity<Object> updateDatabase(@Validated @RequestBody WatcherSource resources) {
         dataSourceService.update(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -100,18 +100,18 @@ public class WatcherSourceController {
     @Log("删除数据库")
     @ApiOperation(value = "删除数据库")
     @DeleteMapping
-	@PreAuthorize("@el.check('datasource:del')")
-    public ResponseEntity<Object> deleteDatabase(@RequestBody Set<String> ids){
+    @PreAuthorize("@el.check('datasource:del')")
+    public ResponseEntity<Object> deleteDatabase(@RequestBody Set<String> ids) {
         dataSourceService.delete(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-	@Log("测试数据库链接")
-	@ApiOperation(value = "测试数据库链接")
-	@PostMapping("/testConnect")
-	@PreAuthorize("@el.check('datasource:testConnect')")
-	public ResponseEntity<Object> testConnect(@Validated @RequestBody WatcherSource resources){
-		return new ResponseEntity<>(dataSourceService.testConnection(resources),HttpStatus.CREATED);
-	}
+    @Log("测试数据库链接")
+    @ApiOperation(value = "测试数据库链接")
+    @PostMapping("/testConnect")
+    @PreAuthorize("@el.check('datasource:testConnect')")
+    public ResponseEntity<Object> testConnect(@Validated @RequestBody WatcherSource resources) {
+        return new ResponseEntity<>(dataSourceService.testConnection(resources), HttpStatus.CREATED);
+    }
 
 }

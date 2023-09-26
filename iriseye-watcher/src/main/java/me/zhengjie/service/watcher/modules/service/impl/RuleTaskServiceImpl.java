@@ -43,7 +43,7 @@ import java.util.*;
  * @date 2019-01-07
  */
 @RequiredArgsConstructor
-@Service(value = "quartzTaskService")
+@Service(value = "ruleTaskService")
 public class RuleTaskServiceImpl implements RuleTaskService {
 
     private final RuleTaskRepository quartzJobRepository;

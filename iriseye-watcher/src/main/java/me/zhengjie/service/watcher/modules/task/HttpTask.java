@@ -24,17 +24,18 @@ import org.springframework.stereotype.Service;
 /**
  * 测试用
  * me.zhengjie.service.watcher.modules.source.task.SimpleTask
+ *
  * @author Zheng Jie
  * @date 2019-01-08
  */
 @Slf4j
 @RTask
 @Service("HttpTask")
-public class HttpTask implements WatcherTask{
-    
+public class HttpTask implements WatcherTask {
+
 
     @Override
     public void run(RuleTask ruleTask, WatcherSource dataSource) {
-        
+
     }
 }

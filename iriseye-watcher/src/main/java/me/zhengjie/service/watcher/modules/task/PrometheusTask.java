@@ -27,21 +27,21 @@ import javax.annotation.Resource;
 
 /**
  * promethus检测
- * 
  */
 @Slf4j
 @RTask
 @Service("PrometheusTask")
-public class PrometheusTask implements WatcherTask{
+public class PrometheusTask implements WatcherTask {
 
     @Resource
     private MessageService messageService;
+
     @Override
     public void run(RuleTask ruleTask, WatcherSource dataSource) {
-        if (!check(dataSource)){
+        if (!check(dataSource)) {
             return;
         }
         PrometheusExecutor.executePql(dataSource, ruleTask.getParams());
     }
-    
+
 }

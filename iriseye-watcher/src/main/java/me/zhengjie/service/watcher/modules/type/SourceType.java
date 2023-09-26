@@ -11,8 +11,7 @@ public enum SourceType {
     Cassandra("Cassandra", "SQL"),
     Elasticsearch("Elasticsearch", "EQL"),
     Redis("Redis", "RQL"),
-    Zookeeper("Zookeeper", "ZQL")
-    ;
+    Zookeeper("Zookeeper", "ZQL");
     private String name;
     private String op;
 

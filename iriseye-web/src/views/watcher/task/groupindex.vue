@@ -34,17 +34,32 @@
             <rrOperation />
           </div>
           <crudOperation :permission="permission">
-            <!-- 任务日志 -->
+            <!-- 批量更新 -->
             <el-button
               slot="right"
               class="filter-item"
               size="mini"
-              type="info"
-              icon="el-icon-tickets"
-              @click="doLog"
-            >日志</el-button>
+              type="warning"
+              @click="doBatchUpdate"
+            >批量修改</el-button>
+            <el-button
+              slot="right"
+              class="filter-item"
+              size="mini"
+              type="warning"
+              @click="doExportTask"
+            >批量导出</el-button>
+            <el-button
+              slot="right"
+              class="filter-item"
+              size="mini"
+              type="warning"
+              @click="doImportTask"
+            >批量导入</el-button>
           </crudOperation>
-          <Log ref="log" />
+          <BatchUpdate ref="batchUpdate" />
+          <ImportTask ref="importTask" />
+          <ExportTask ref="exportTask" />
         </div>
         <!--Form表单-->
         <el-dialog :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" append-to-body width="730px">
@@ -175,7 +190,9 @@
 import { getAllSourceNames } from '@/api/watcher/datasource'
 import crudTask, { getAllTaskNames } from '@/api/watcher/task'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
-import Log from './log'
+import BatchUpdate from './batchUpdate'
+import ExportTask from './exportTask'
+import ImportTask from './importTask'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import pagination from '@crud/Pagination'
@@ -188,14 +205,21 @@ import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 const defaultForm = { id: null, groupId: 0, taskName: null, sourceName: null, beanName: null, methodName: null, params: null, checkTime: 0, durationTime: 0, startTime: 0, endTime: 0, level: null, feiShu: null, cronExpression: null, pauseAfterFailure: false, isPause: false, callBack: null, description: null }
 export default {
   name: 'GroupTasks',
-  components: { Log, pagination, crudOperation, rrOperation, DateRangePicker },
+  components: { ExportTask, ImportTask, BatchUpdate, pagination, crudOperation, rrOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '定时任务', url: 'api/tasks', crudMethod: { ...crudTask }})
+    return CRUD({ title: '定时任务', url: 'api/tasks', crudMethod: { ...crudTask },
+      optShow: {
+        add: true,
+        edit: false,
+        del: false,
+        reset: false
+      }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
     return {
       delLoading: false,
+      selectSize: 0,
       deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [],
       defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
       taskNames: [], sourceNames: [],
@@ -239,6 +263,10 @@ export default {
         console.log(err.response.data.message)
       })
     },
+    handleCurrentChange(selection) {
+      this.crud.selections = selection
+      this.selectSize = selection.length
+    },
     updateParams(id) {
       console.log(id)
     },
@@ -255,10 +283,17 @@ export default {
         this.$refs[id].doClose()
       })
     },
-    // 显示日志
-    doLog() {
-      this.$refs.log.dialog = true
-      this.$refs.log.doInit()
+    // 显示批量修改
+    doBatchUpdate() {
+      this.$refs.batchUpdate.dialog = true
+    },
+    // 显示批量修改
+    doExportTask() {
+      this.$refs.exportTask.dialog = true
+    },
+    // 显示批量修改
+    doImportTask() {
+      this.$refs.importTask.dialog = true
     },
     checkboxT(row, rowIndex) {
       return row.id !== 1
