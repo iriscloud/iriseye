@@ -54,13 +54,10 @@ public class TaskStatus extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "查询数据信息")
     private String data;
 
-    @ApiModelProperty(value = "创建时间")
-    private long create;
 
     @ApiModelProperty(value = "是否命中规则")
     private boolean status;
-
-    //create + 持续时间
+    
     @ApiModelProperty(value = "告警触发时间")
     private long alarmTime;
 

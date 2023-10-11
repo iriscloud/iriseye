@@ -7,6 +7,8 @@ allprojects {
     version = '1.0'
 }
 
+logger.lifecycle("TARGETING VERSION: ${version}")
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'

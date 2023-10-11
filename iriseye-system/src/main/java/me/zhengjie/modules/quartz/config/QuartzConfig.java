@@ -15,11 +15,17 @@
  */
 package me.zhengjie.modules.quartz.config;
 
+import org.quartz.Scheduler;
 import org.quartz.spi.TriggerFiredBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.AdaptableJobFactory;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
 
 /**
  * 定时任务配置
@@ -48,5 +54,21 @@ public class QuartzConfig {
 			capableBeanFactory.autowireBean(jobInstance);
 			return jobInstance;
 		}
+	}
+	@Autowired
+	private DataSource dataSource;
+
+	@Bean
+	public SchedulerFactoryBean schedulerFactoryBean() {
+		SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
+		scheduler.setOverwriteExistingJobs(true);
+		scheduler.setAutoStartup(true);
+		scheduler.setDataSource(dataSource);
+		return scheduler;
+	}
+
+	@Bean
+	public Scheduler scheduler(SchedulerFactoryBean schedulerFactoryBean) {
+		return schedulerFactoryBean.getScheduler();
 	}
 }

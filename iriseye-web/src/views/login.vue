@@ -47,7 +47,7 @@ import Config from '@/settings'
 import { getCodeImg } from '@/api/login'
 import Cookies from 'js-cookie'
 import qs from 'qs'
-import Background from '@/assets/images/background.webp'
+import Background from '@/assets/images/background.jpg'
 export default {
   name: 'Login',
   data() {
@@ -170,10 +170,11 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
   .login {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     height: 100%;
     background-size: cover;
+    margin-right: 13%;
   }
   .title {
     margin: 0 auto 30px auto;

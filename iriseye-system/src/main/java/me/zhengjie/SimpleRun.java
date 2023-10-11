@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import me.zhengjie.annotation.rest.AnonymousGetMapping;
 import me.zhengjie.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * 开启审计功能 -> @EnableJpaAuditing
@@ -39,10 +41,10 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
-public class AppRun {
+public class SimpleRun {
 
     public static void main(String[] args) {
-        SpringApplication springApplication = new SpringApplication(AppRun.class);
+        SpringApplication springApplication = new SpringApplication(SimpleRun.class);
         springApplication.addListeners(new ApplicationPidFileWriter());
         springApplication.run(args);
     }

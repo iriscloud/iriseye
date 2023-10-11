@@ -7,6 +7,7 @@ dependencies {
     compile project(':iriseye-tools')
     compile project(':iriseye-watcher')
     compile "org.springframework.boot:spring-boot-starter-websocket:${springboot_version}"
+    compile "org.springframework.boot:spring-boot-starter-thymeleaf:${springboot_version}"
     compile "io.jsonwebtoken:jjwt-api:${jjwt_version}"
     compile "io.jsonwebtoken:jjwt-impl:${jjwt_version}"
     compile "io.jsonwebtoken:jjwt-jackson:${jjwt_version}"

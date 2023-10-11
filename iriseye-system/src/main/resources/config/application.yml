@@ -3,7 +3,8 @@ server:
   compression:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
-
+  servlet:
+    context-path: /alarmhub
 spring:
   freemarker:
     check-template-location: false
@@ -13,9 +14,9 @@ spring:
     redis:
       repositories:
         enabled: false
-#  pid:
-#    file: /自行指定位置/eladmin.pid
-
+  thymeleaf:
+    prefix: classpath:/alarmhub/
+    suffix: .html
   #配置 Jpa
   jpa:
     hibernate:
