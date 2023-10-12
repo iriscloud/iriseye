@@ -1,8 +1,9 @@
-rootProject.name = 'iriseye'
-include(':iriseye-common')
-include(':iriseye-logging')
-include(':iriseye-system')
-include(':iriseye-tools')
-include(':iriseye-generator')
-include(':iriseye-message')
-include(':iriseye-watcher')
+rootProject.name = 'iris-alarmhub'
+include(':alarmhub-common')
+include(':alarmhub-logging')
+include(':alarmhub-tools')
+include(':alarmhub-generator')
+include(':alarmhub-message')
+include(':alarmhub-watcher')
+include(':alarmhub-starter')
+include(':alarmhub-app')
