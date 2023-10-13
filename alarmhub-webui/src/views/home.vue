@@ -1,107 +1,110 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-editor-container">
-      <github-corner class="github-corner" />
-
-      <panel-group @handleSetLineChartData="handleSetLineChartData" />
-
-      <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-        <line-chart :chart-data="lineChartData" />
-      </el-row>
-      <el-row :gutter="32">
-        <el-col :xs="24" :sm="24" :lg="8">
-          <div class="chart-wrapper">
-            <radar-chart />
-          </div>
-        </el-col>
-        <el-col :xs="24" :sm="24" :lg="8">
-          <div class="chart-wrapper">
-            <pie-chart />
-          </div>
-        </el-col>
-        <el-col :xs="24" :sm="24" :lg="8">
-          <div class="chart-wrapper">
-            <bar-chart />
-          </div>
-        </el-col>
-      </el-row>
+  <div class="app-container">
+    <!--工具栏-->
+    <div class="head-container">
+      <eHeader :dict="dict" :permission="permission" />
+      <crudOperation :permission="permission" />
     </div>
+    <!--表格渲染-->
+    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+      <el-table-column type="selection" width="55" />
+      <el-table-column prop="name" label="名称" />
+      <el-table-column prop="jobSort" label="排序">
+        <template slot-scope="scope">
+          {{ scope.row.jobSort }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="状态" align="center">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.enabled"
+            active-color="#409EFF"
+            inactive-color="#F56C6C"
+            @change="changeEnabled(scope.row, scope.row.enabled)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column prop="createTime" label="创建日期" />
+      <!--   编辑与删除   -->
+      <el-table-column
+        v-if="checkPer(['admin','job:edit','job:del'])"
+        label="操作"
+        width="130px"
+        align="center"
+        fixed="right"
+      >
+        <template slot-scope="scope">
+          <udOperation
+            :data="scope.row"
+            :permission="permission"
+          />
+        </template>
+      </el-table-column>
+    </el-table>
+    <!--分页组件-->
+    <pagination />
+    <!--表单渲染-->
+    <eForm :job-status="dict.job_status" />
   </div>
 </template>
 
 <script>
-import GithubCorner from '@/components/GithubCorner'
-import PanelGroup from './dashboard/PanelGroup'
-import LineChart from './dashboard/LineChart'
-import RadarChart from '@/components/Echarts/RadarChart'
-import PieChart from '@/components/Echarts/PieChart'
-import BarChart from '@/components/Echarts/BarChart'
-
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
-
+import crudJob from '@/api/system/job'
+import eHeader from './module/header'
+import eForm from './module/form'
+import CRUD, { presenter } from '@crud/crud'
+import crudOperation from '@crud/CRUD.operation'
+import pagination from '@crud/Pagination'
+import udOperation from '@crud/UD.operation'
 export default {
-  name: 'Dashboard',
-  components: {
-    GithubCorner,
-    PanelGroup,
-    LineChart,
-    RadarChart,
-    PieChart,
-    BarChart
+  name: 'Job',
+  components: { eHeader, eForm, crudOperation, pagination, udOperation },
+  cruds() {
+    return CRUD({
+      title: '岗位',
+      url: 'api/job',
+      sort: ['jobSort,asc', 'id,desc'],
+      crudMethod: { ...crudJob }
+    })
   },
+  mixins: [presenter()],
+  // 数据字典
+  dicts: ['job_status'],
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      permission: {
+        add: ['admin', 'job:add'],
+        edit: ['admin', 'job:edit'],
+        del: ['admin', 'job:del']
+      }
     }
   },
   methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+    // 改变状态
+    changeEnabled(data, val) {
+      this.$confirm('此操作将 "' + this.dict.label.job_status[val] + '" ' + data.name + '岗位, 是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // eslint-disable-next-line no-undef
+        crudJob.edit(data).then(() => {
+          // eslint-disable-next-line no-undef
+          this.crud.notify(this.dict.label.job_status[val] + '成功', 'success')
+        }).catch(err => {
+          data.enabled = !data.enabled
+          console.log(err.data.message)
+        })
+      }).catch(() => {
+        data.enabled = !data.enabled
+      })
     }
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .dashboard-editor-container {
-    padding: 32px;
-    background-color: rgb(240, 242, 245);
-    position: relative;
-
-    .github-corner {
-      position: absolute;
-      top: 0;
-      border: 0;
-      right: 0;
-    }
-
-    .chart-wrapper {
-      background: #fff;
-      padding: 16px 16px 0;
-      margin-bottom: 32px;
-    }
-  }
-
-  @media (max-width:1024px) {
-    .chart-wrapper {
-      padding: 8px;
-    }
-  }
+::v-deep .el-input-number .el-input__inner {
+  text-align: left;
+}
 </style>
