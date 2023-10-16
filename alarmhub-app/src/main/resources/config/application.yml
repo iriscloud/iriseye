@@ -32,6 +32,26 @@ spring:
     password: ${REDIS_PWD:}
     #连接超时时间
     timeout: 5000
+  quartz:
+    #相关属性配置
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: clusteredScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            clusterCheckinInterval: 10000
+            useProperties: false
+    #数据库方式
+    job-store-type: jdbc
+    #初始化表结构
+    jdbc:
+      initialize-schema: always
 
 task:
   pool:
@@ -44,10 +64,6 @@ task:
     # 队列容量
     queue-capacity: 50
 
-#七牛云
-qiniu:
-  # 文件大小 /M
-  max-size: 15
 
 #邮箱验证码有效时间/秒
 code:

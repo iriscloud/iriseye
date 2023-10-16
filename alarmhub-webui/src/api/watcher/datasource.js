@@ -32,6 +32,14 @@ export function testDbConnection(data) {
   })
 }
 
+export function dataSearch(data) {
+  return request({
+    url: 'api/datasearch',
+    method: 'get',
+    data
+  })
+}
+
 export function getAllSourceNames() {
   const params = {
     page: 0,
