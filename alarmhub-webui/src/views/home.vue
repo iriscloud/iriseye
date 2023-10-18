@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
-    <dataSearch />
+    <groupTask />
   </div>
 </template>
 
 <script>
-import dataSearch from './watcher/search/index'
+import groupTask from './watcher/task/groupindex'
 
 export default {
   name: 'Home',
-  components: { dataSearch },
+  components: { groupTask },
 
   data() {
     return {

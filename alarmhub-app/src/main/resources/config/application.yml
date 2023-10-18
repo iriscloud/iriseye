@@ -41,17 +41,17 @@ spring:
             instanceName: clusteredScheduler
             instanceId: AUTO
           jobStore:
-            class: org.quartz.impl.jdbcjobstore.JobStoreTX
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-            tablePrefix: QRTZ_
-            isClustered: true
-            clusterCheckinInterval: 10000
+            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore # springboot>2.5.6后使用这个
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate #仅为数据库制作了特定于数据库的代理
             useProperties: false
+            tablePrefix: QRTZ_
+            isClustered: true #打开群集功能
+            clusterCheckinInterval: 10000
     #数据库方式
     job-store-type: jdbc
-    #初始化表结构
-    jdbc:
-      initialize-schema: always
+    #初始化表结构 线上
+#    jdbc:
+#      initialize-schema: always
 
 task:
   pool:

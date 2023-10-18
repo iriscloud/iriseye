@@ -190,9 +190,9 @@
 import { getAllSourceNames } from '@/api/watcher/datasource'
 import crudTask, { getAllTaskNames } from '@/api/watcher/task'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
-import BatchUpdate from './batchUpdate'
-import ExportTask from './exportTask'
-import ImportTask from './importTask'
+// import BatchUpdate from './batchUpdate'
+// import ExportTask from './exportTask'
+// import ImportTask from './importTask'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import pagination from '@crud/Pagination'
@@ -205,12 +205,12 @@ import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 const defaultForm = { id: null, groupId: 0, taskName: null, sourceName: null, beanName: null, methodName: null, params: null, checkTime: 0, durationTime: 0, startTime: 0, endTime: 0, level: null, feiShu: null, cronExpression: null, pauseAfterFailure: false, isPause: false, callBack: null, description: null }
 export default {
   name: 'GroupTasks',
-  components: { ExportTask, ImportTask, BatchUpdate, pagination, crudOperation, rrOperation, DateRangePicker },
+  components: { pagination, crudOperation, rrOperation, DateRangePicker },
   cruds() {
     return CRUD({ title: '定时任务', url: 'api/tasks', crudMethod: { ...crudTask },
       optShow: {
         add: true,
-        edit: false,
+        edit: true,
         del: true,
         reset: false
       }})
