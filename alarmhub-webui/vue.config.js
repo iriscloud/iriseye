@@ -14,7 +14,7 @@ const port = 8013 // 端口配置
 module.exports = {
   // hash 模式下可使用
   // publicPath: process.env.NODE_ENV === 'development' ? '/' : './',
-  publicPath: '/',
+  publicPath: '/alarmhub',
   outputDir: '../alarmhub-starter/src/main/resources/alarmhub/',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',

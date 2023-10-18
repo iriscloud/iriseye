@@ -26,7 +26,7 @@ import me.zhengjie.service.watcher.modules.service.WatcherSourceService;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceDto;
 import me.zhengjie.service.watcher.modules.service.dto.WatcherSourceQueryCriteria;
 import me.zhengjie.service.watcher.modules.service.mapstruct.WatcherSourceMapper;
-import me.zhengjie.service.watcher.modules.task.sql.SqlExecutor;
+import me.zhengjie.task.sql.SqlExecutor;
 import me.zhengjie.utils.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

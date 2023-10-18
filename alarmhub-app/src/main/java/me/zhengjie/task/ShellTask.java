@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package me.zhengjie.service.watcher.modules.task;
+package me.zhengjie.task;
 
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.RTask;
 import me.zhengjie.service.watcher.modules.domain.RuleTask;
 import me.zhengjie.service.watcher.modules.domain.WatcherSource;
+import me.zhengjie.service.watcher.modules.task.WatcherTask;
 import org.springframework.stereotype.Service;
 
 /**

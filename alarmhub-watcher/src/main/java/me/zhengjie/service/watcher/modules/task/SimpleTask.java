@@ -17,31 +17,25 @@ package me.zhengjie.service.watcher.modules.task;
 
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.RTask;
-import me.zhengjie.service.modules.message.service.MessageService;
 import me.zhengjie.service.watcher.modules.domain.RuleTask;
 import me.zhengjie.service.watcher.modules.domain.WatcherSource;
-import me.zhengjie.service.watcher.modules.task.prometheus.PrometheusExecutor;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 /**
- * promethus检测
+ * 测试用
+ * me.zhengjie.service.watcher.modules.source.task.SimpleTask
+ *
+ * @author Zheng Jie
+ * @date 2019-01-08
  */
 @Slf4j
 @RTask
-@Service("PrometheusTask")
-public class PrometheusTask implements WatcherTask {
+@Service("HttpTask")
+public class SimpleTask implements WatcherTask {
 
-    @Resource
-    private MessageService messageService;
 
     @Override
     public void run(RuleTask ruleTask, WatcherSource dataSource) {
-        if (!check(dataSource)) {
-            return;
-        }
-        PrometheusExecutor.executePql(dataSource, ruleTask.getParams());
-    }
 
+    }
 }

@@ -1,4 +1,4 @@
-package me.zhengjie.service.watcher.modules.task.prometheus;
+package me.zhengjie.task.prometheus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
