@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @RTask
-@Service("HttpTask")
+@Service("SimpleTask")
 public class SimpleTask implements WatcherTask {
 
 

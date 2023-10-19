@@ -21,7 +21,7 @@ import me.zhengjie.service.modules.message.service.MessageService;
 import me.zhengjie.service.watcher.modules.domain.RuleTask;
 import me.zhengjie.service.watcher.modules.domain.WatcherSource;
 import me.zhengjie.service.watcher.modules.task.WatcherTask;
-import me.zhengjie.task.prometheus.PrometheusExecutor;
+import me.zhengjie.service.watcher.modules.task.prometheus.PrometheusExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

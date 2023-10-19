@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package me.zhengjie.task.sql;
+package me.zhengjie.service.watcher.modules.task.sql;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.StringUtils;
